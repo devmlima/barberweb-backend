@@ -36,6 +36,25 @@ class UserController {
     return response.json(instance);
   }
 
+  async update(request: Request, response: Response) {
+    const body: IUser = request.body;
+    const params = {
+      id: body.id,
+      nome: body.nome,
+      cpf: body.cpf,
+      email: body.email,
+      celular: body.celular,
+      senha: body.senha,
+      data_nascimento: body.dataNascimento,
+    };
+
+    const instance = await knex("users")
+      .where({ id: params.id })
+      .update(params);
+
+    return response.json(instance);
+  }
+
   async delete(request: Request, response: Response) {
     const id = request.body;
     const instance = await knex("users").where({ id }).del();
