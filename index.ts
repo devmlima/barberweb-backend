@@ -1,10 +1,12 @@
 import express from 'express';
+import cors from 'cors';
+import routes from './routes';
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.send('APP BARBER WEB');
-})
+app.use(cors());
+app.use(express.json());
+app.use(routes);
 
 app.listen(3000, () => {
     console.log('Aplicação iniciada na porta 3000!');
