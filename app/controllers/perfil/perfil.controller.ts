@@ -9,7 +9,7 @@ interface IPerfil {
   dataAlteracao: Date;
 }
 
-class UserController {
+class PerfilController {
   async findById(request: Request, response: Response) {
     const usuario = request.query;
     const user = await knex("perfil")
@@ -52,4 +52,4 @@ class UserController {
   }
 }
 
-export default UserController;
+export default PerfilController;

@@ -35,7 +35,7 @@ class ClienteController {
       endereco_id: body.enderecoId,
       empresa_id: body.empresaId,
     };
-    const instance = await knex("users").insert(params);
+    const instance = await knex("clientes").insert(params);
 
     return response.json(instance);
   }
@@ -51,9 +51,16 @@ class ClienteController {
       empresa_id: body.empresaId,
     };
 
-    const instance = await knex("users")
+    const instance = await knex("clientes")
       .where({ id: params.id })
       .update(params);
+
+    return response.json(instance);
+  }
+
+  async delete(request: Request, response: Response) {
+    const id = request.body;
+    const instance = await knex("clientes").where({ id }).del();
 
     return response.json(instance);
   }
