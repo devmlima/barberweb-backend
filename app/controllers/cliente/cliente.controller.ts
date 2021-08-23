@@ -1,37 +1,39 @@
 import { Request, Response } from "express";
-import knex from "knex";
+import { knex } from "knex";
 
-interface IUser {
+interface ICliente {
   id: number;
   empresaId: number;
+  enderecoId: number;
   nome: string;
   cpf: string;
-  email: string;
   celular: string;
-  senha: string;
-  dataNascimento: string;
   dataInclusao: Date;
   dataAlteracao: Date;
 }
 
-class UserController {
+class ClienteController {
   async findById(request: Request, response: Response) {
     const id = request.query;
-    const user = await knex("users").where("id", id).select("users.*");
+    const user = await knex("clientes").where("id", id).select("clientes.*");
+
+    return response.json(user);
+  }
+
+  async findAll(request: Request, response: Response) {
+    const user = await knex("clientes").select("clientes.*");
 
     return response.json(user);
   }
 
   async create(request: Request, response: Response) {
-    const body: IUser = request.body;
+    const body: ICliente = request.body;
     const params = {
       nome: body.nome,
       cpf: body.cpf,
-      email: body.email,
       celular: body.celular,
-      senha: body.senha,
-      data_nascimento: body.dataNascimento,
-      empresa_id: body.empresaId
+      endereco_id: body.enderecoId,
+      empresa_id: body.empresaId,
     };
     const instance = await knex("users").insert(params);
 
@@ -39,15 +41,13 @@ class UserController {
   }
 
   async update(request: Request, response: Response) {
-    const body: IUser = request.body;
+    const body: ICliente = request.body;
     const params = {
       id: body.id,
       nome: body.nome,
       cpf: body.cpf,
-      email: body.email,
       celular: body.celular,
-      senha: body.senha,
-      data_nascimento: body.dataNascimento,
+      endereco_id: body.enderecoId,
       empresa_id: body.empresaId,
     };
 
@@ -57,13 +57,6 @@ class UserController {
 
     return response.json(instance);
   }
-
-  async delete(request: Request, response: Response) {
-    const id = request.body;
-    const instance = await knex("users").where({ id }).del();
-
-    return response.json(instance);
-  }
 }
 
-export default UserController;
+export default ClienteController;
