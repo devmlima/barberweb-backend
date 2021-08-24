@@ -5,10 +5,10 @@ module.exports = {
   development: {
     client: 'pg',
     connection: {
-      host: 'barberiaweb.cvjbmiv4gauk.us-east-1.rds.amazonaws.com',
-      database: 'db_barbearia',
-      user:     'devmlima',
-      password: 'm.30861383'
+      host: process.env.HOST,
+      database: process.env.DATABASE,
+      user: process.env.USER,
+      password: process.env.PASSWORD
     },
     migrations: {
       directory: __dirname + '/knex/migrations',
@@ -21,10 +21,10 @@ module.exports = {
   staging: {
     client: 'pg',
     connection: {
-      host: 'barberiaweb.cvjbmiv4gauk.us-east-1.rds.amazonaws.com',
-      database: 'db_barbearia',
-      user:     'devmlima',
-      password: 'm.30861383'
+      host: process.env.HOST,
+      database: process.env.DATABASE,
+      user: process.env.USER,
+      password: process.env.PASSWORD
     },
     pool: {
       min: 2,
@@ -41,10 +41,10 @@ module.exports = {
   production: {
     client: 'pg',
     connection: {
-      host: 'barberiaweb.cvjbmiv4gauk.us-east-1.rds.amazonaws.com',
-      database: 'db_barbearia',
-      user:     'devmlima',
-      password: 'm.30861383'
+      host: process.env.HOST,
+      database: process.env.DATABASE,
+      user: process.env.USER,
+      password: process.env.PASSWORD
     },
     pool: {
       min: 2,
