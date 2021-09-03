@@ -1,8 +1,7 @@
-import { knex } from "knex";
+import { User } from './../models/user.model';
 import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { get } from "lodash";
-import UserProvider from "../api/user/user.service";
 import { UnauthorizedException } from "./exceptions";
 
 export const authMiddleware = async (req: any, res: Response) => {
@@ -10,22 +9,27 @@ export const authMiddleware = async (req: any, res: Response) => {
     .replace("Bearer", "")
     .trim();
   const decoded = jwt.decode(token, { complete: true });
+  const user = new User();
 
   let usuario = null;
   if (decoded) {
-    usuario = await knex("users").where("id", decoded.payload.sub).select("users.*");
+    usuario = User.findOne({ where: { id: decoded.payload.sub } });
   }
 
-  if (!usuario) return res.status(401).send('Usuário não encontrado!');
+  if (!usuario) return res.status(401).send("Usuário não encontrado!");
 
   try {
-    if (decoded) UserProvider.validateToken(token);
+    if (decoded) user.validateToken(token);
   } catch (e: any) {
     switch (e.name) {
-        case "TokenExpiredError": throw new UnauthorizedException('Token expirado!');
-        case "JsonWebTokenError": throw new UnauthorizedException('Token mal formado!');
-        case "NotBeforeError": throw new UnauthorizedException('Token ainda não pode ser utilizado!');
-        default: throw new UnauthorizedException('Token inválido!');
+      case "TokenExpiredError":
+        throw new UnauthorizedException("Token expirado!");
+      case "JsonWebTokenError":
+        throw new UnauthorizedException("Token mal formado!");
+      case "NotBeforeError":
+        throw new UnauthorizedException("Token ainda não pode ser utilizado!");
+      default:
+        throw new UnauthorizedException("Token inválido!");
     }
   }
 

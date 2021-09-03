@@ -1,4 +1,4 @@
-import { User } from './app/api/models/user.model';
+import { User } from './app/models/user.model';
 import { Sequelize } from "sequelize-typescript";
 import { Op as OpSequelize } from "sequelize";
 

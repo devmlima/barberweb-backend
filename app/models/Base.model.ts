@@ -1,4 +1,4 @@
-import { getUsuarioLogado } from './../../shared/tenant';
+import { getUsuarioLogado } from '../shared/tenant';
 import { Model, BeforeBulkCreate, BeforeValidate } from "sequelize-typescript";
 
 export class BaseModel<T> extends Model<BaseModel<T>> {
