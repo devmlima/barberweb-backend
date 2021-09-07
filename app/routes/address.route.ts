@@ -4,11 +4,11 @@ import addressController from "../controllers/address.controller";
 
 const AddressRoute = Router();
 
-AddressRoute.get('/findAll', addressController.findAll);
-AddressRoute.get('/findById', addressController.findById);
-AddressRoute.put('/update', addressController.update);
-AddressRoute.delete('/delete/:id', addressController.delete);
-AddressRoute.post('/create', addressController.create);
+AddressRoute.get('/findAll', authMiddleware, addressController.findAll);
+AddressRoute.get('/findById', authMiddleware, addressController.findById);
+AddressRoute.put('/update', authMiddleware, addressController.update);
+AddressRoute.delete('/delete/:id', authMiddleware, addressController.delete);
+AddressRoute.post('/create', authMiddleware, addressController.create);
 
 export default AddressRoute;
 

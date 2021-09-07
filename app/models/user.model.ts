@@ -11,6 +11,7 @@ import {
   ForeignKey,
 } from "sequelize-typescript";
 import { BaseModel } from "./Base.model";
+import * as moment from "moment";
 
 export interface IUser {
   id: number;
@@ -20,6 +21,7 @@ export interface IUser {
   email: string;
   celular: string;
   senha: string;
+  secret: string;
   dataNascimento: string;
   dataInclusao?: Date;
   dataAlteracao?: Date;
@@ -83,7 +85,13 @@ export class User extends BaseModel<User> implements IUser {
   @Column({
     type: DataType.STRING,
     allowNull: true,
-    field: 'data_nascimento'
+  })
+  secret: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: "data_nascimento",
   })
   dataNascimento: string;
 
@@ -106,6 +114,7 @@ export class User extends BaseModel<User> implements IUser {
   @BeforeCreate
   public static async hashPassword(user: User, options: any) {
     user.setSenha(user.senha);
+    user.secret = crypto.randomBytes(20).toString("hex").substr(0, 6);
   }
 
   @BeforeSave
@@ -128,12 +137,15 @@ export class User extends BaseModel<User> implements IUser {
     let user: IUser | any = this.toJSON();
     delete user.senha;
     delete user.id;
+    delete user.secret;
+
     return user;
   }
 
   public setSenha(senhaNova: string) {
     if (senhaNova.length < 8)
       throw new HttpException("A senha deve possuir no minimo de 8 caracteres");
+
     this.senha = crypto.createHmac("sha256", senhaNova).digest("hex");
   }
 
@@ -142,29 +154,31 @@ export class User extends BaseModel<User> implements IUser {
   }
 
   public generateToken(isApi: boolean = false) {
-    let token = jwt.sign({ sub: this.id }, process.env.JWT_SECRET + "", {
-      expiresIn: process.env.JWT_EXP_TIME,
+    let token = jwt.sign({ sub: this.id }, process.env.JWT_SECRET + this.secret, {
+      expiresIn: "1h",
     });
     const decoded = jwt.decode(token, { complete: true });
-    // const expiresIn = String(moment.unix(decoded.payload.exp).toDate().getSeconds());
+    const expiresIn = String(
+      moment.unix(decoded.payload.exp).toDate().getSeconds()
+    );
 
     return {
       token,
-      // expiresIn
+      expiresIn,
     };
   }
 
   public generateTokenResetSenha() {
-    return jwt.sign({ usr: this.id, res: true }, process.env.JWT_SECRET + "", {
+    return jwt.sign({ usr: this.id, res: true }, process.env.JWT_SECRET + this.secret, {
       expiresIn: "1h",
     });
   }
 
-  public validateToken(token: string, isApi: boolean = false): boolean {
-    return !!jwt.verify(token, process.env.JWT_SECRET + "");
+  public validateToken(token: string, secret): boolean {
+    return !!jwt.verify(token, process.env.JWT_SECRET + secret);
   }
 
   public validateTokenResetSenha(token: string): boolean {
-    return !!jwt.verify(token, process.env.JWT_SECRET + "");
+    return !!jwt.verify(token, process.env.JWT_SECRET + this.secret);
   }
 }

@@ -7,7 +7,6 @@ class UserController {
     const query: any = request.query;
 
     try {
-        // verificar o motivo de eu não conseguir fazer um where com os parametros que eu quero
       const user = await User.findAll();
       return response.json(user);
     } catch (e) {
@@ -52,19 +51,23 @@ class UserController {
     if (!body.email) throw new BadRequestException("Email não informado!");
     if (!body.senha) throw new BadRequestException("Senha não informada!");
 
-    const user = await User.findOne({ where: { id: body.id } });
+    const user = await User.findOne({ where: { email: body.email } as any });
     if (!user) throw new BadRequestException("Usuário não encontrado!");
-    console.log(user);
 
-    // const validate = await User.validateToken(body.token);
+    if (!user.compareSenha(body.senha)) {
+      throw new BadRequestException("Senha inválida");
+    }
 
-    const newUser = user;
-    delete newUser.senha;
-    return response.json(newUser);
+    const instance = user.json();
+    const { token } = user.generateToken();
+
+    const result = { ...instance, token };
+    return response.json(result);
   }
 
   async signUp(request: Request, response: Response): Promise<Response> {
     const body = request.body;
+
     try {
       const params: any = {
         nome: body.nome,
@@ -76,10 +79,14 @@ class UserController {
         empresaId: body.empresaId,
       };
 
-      const instance = await User.create(params);
-      return response.json(instance);
+      const instance = await User.create(params as any);
+      const { token, expiresIn } = instance.generateToken();
+
+      return response
+        .status(200)
+        .json({ ...instance.json(), token, expiresIn });
     } catch (e) {
-      console.log(e)
+      console.log(e);
       throw new Error("Erro ao criar registro");
     }
   }
