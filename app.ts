@@ -3,6 +3,11 @@ import cors from "cors";
 import express from "express";
 import UserRoute from './app/routes/user.route';
 import CompanyRoute from './app/routes/company.route';
+import AddressRoute from './app/routes/address.route';
+import CityRoute from './app/routes/city.route';
+import ClientRoute from './app/routes/client.route';
+import ProfileRoute from './app/routes/profile.route';
+import StateRoute from './app/routes/state.route';
 
 export class App {
     private express: express.Application;
@@ -39,5 +44,10 @@ export class App {
     private routes() {
         this.express.use('/users', UserRoute)
         this.express.use('/company', CompanyRoute)
+        this.express.use('/address', AddressRoute)
+        this.express.use('/city', CityRoute)
+        this.express.use('/client', ClientRoute)
+        this.express.use('/profile', ProfileRoute)
+        this.express.use('/state', StateRoute)
     }
 }
