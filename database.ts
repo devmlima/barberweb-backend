@@ -7,6 +7,9 @@ import { Company } from './app/models/company.model';
 import { User } from './app/models/user.model';
 import { Sequelize } from "sequelize-typescript";
 import { Op as OpSequelize } from "sequelize";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const operatorsAliases = {
   $eq: OpSequelize.eq,
@@ -46,11 +49,11 @@ const operatorsAliases = {
 };
 
 export const sequelize = new Sequelize({
-  host: 'barberiaweb.cvjbmiv4gauk.us-east-1.rds.amazonaws.com',
-  database: 'db_barbearia',
+  host: process.env.HOST,
+  database: process.env.DATABASE,
   dialect: "postgres",
-  username: 'devmlima',
-  password: 'm.30861383',
+  username: process.env.USERNAME,
+  password: process.env.PASSWORD,
   operatorsAliases,
   pool: {
     max: 1,
