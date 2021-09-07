@@ -1,3 +1,9 @@
+import { State } from './app/models/state.model';
+import { Profile } from './app/models/profile.model';
+import { Client } from './app/models/client.model';
+import { City } from './app/models/city.model';
+import { Address } from './app/models/address.model';
+import { Company } from './app/models/company.model';
 import { User } from './app/models/user.model';
 import { Sequelize } from "sequelize-typescript";
 import { Op as OpSequelize } from "sequelize";
@@ -60,6 +66,12 @@ export const sequelize = new Sequelize({
 
 sequelize.addModels([
   User,
+  Company,
+  Address,
+  City,
+  Client,
+  Profile,
+  State
 ])
 
 export const sequelizeAuthenticate = async () => {

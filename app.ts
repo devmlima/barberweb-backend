@@ -2,6 +2,7 @@ import { sequelizeAuthenticate } from './database';
 import cors from "cors";
 import express from "express";
 import UserRoute from './app/routes/user.route';
+import CompanyRoute from './app/routes/company.route';
 
 export class App {
     private express: express.Application;
@@ -37,5 +38,6 @@ export class App {
 
     private routes() {
         this.express.use('/users', UserRoute)
+        this.express.use('/company', CompanyRoute)
     }
 }

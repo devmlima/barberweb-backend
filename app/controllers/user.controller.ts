@@ -79,6 +79,7 @@ class UserController {
       const instance = await User.create(params);
       return response.json(instance);
     } catch (e) {
+      console.log(e)
       throw new Error("Erro ao criar registro");
     }
   }

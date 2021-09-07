@@ -40,7 +40,7 @@ export class Company extends BaseModel<Company> implements ICompany {
 
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
     field: "endereco_id",
     comment: "Identificador do endereço da empresa",
   })
@@ -65,7 +65,7 @@ export class Company extends BaseModel<Company> implements ICompany {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
     comment: "Telefone da empresa",
   })
   telefone: string;

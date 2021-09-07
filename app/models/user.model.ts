@@ -44,7 +44,7 @@ export class User extends BaseModel<User> implements IUser {
 
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
     field: "empresa_id",
   })
   @ForeignKey(() => Company)
@@ -52,37 +52,38 @@ export class User extends BaseModel<User> implements IUser {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   nome: string;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   cpf: string;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   email: string;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   celular: string;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   senha: string;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
+    field: 'data_nascimento'
   })
   dataNascimento: string;
 
