@@ -8,6 +8,8 @@ import CityRoute from './app/routes/city.route';
 import ClientRoute from './app/routes/client.route';
 import ProfileRoute from './app/routes/profile.route';
 import StateRoute from './app/routes/state.route';
+import swaggerUi from "swagger-ui-express";
+import swaggerDocs from "./swagger.json";
 
 export class App {
     private express: express.Application;
@@ -42,7 +44,9 @@ export class App {
     }
 
     private routes() {
-        this.express.use('/users', UserRoute)
+        this.express.use('/users', swaggerUi.serve, swaggerUi.setup(swaggerDocs), UserRoute);
+        this.express.use('/users', UserRoute);
+        
         this.express.use('/company', CompanyRoute)
         this.express.use('/address', AddressRoute)
         this.express.use('/city', CityRoute)

@@ -3,7 +3,7 @@ import { BadRequestException } from "./../shared/exceptions";
 import { Request, Response } from "express";
 
 class CompanyController {
-  async findAll(request: Request, response: Response): Promise<Response> {
+  async find(request: Request, response: Response): Promise<Response> {
     const query: any = request.query;
 
     try {
@@ -57,9 +57,15 @@ class CompanyController {
         nomeFantasia: body.nomeFantasia,
         telefone: body.telefone,
       };
+      const company = Company.findOne({
+        where: { cpfCnpj: params.cpfCnpj } as any,
+      });
 
+      if (company) {
+        return response.status(400).send("Empresa já cadastrada!");  
+      }
       const instance = await Company.create(params as any);
-      return response.json(instance);
+      return response.status(200).json(instance);
     } catch (e) {
       console.log(e);
       return response.status(500).send("Erro ao criar registro");

@@ -4,7 +4,7 @@ import companyController from "../controllers/company.controller";
 
 const CompanyRoute = Router();
 
-CompanyRoute.get('/findAll', authMiddleware, companyController.findAll);
+CompanyRoute.get('/find', authMiddleware, companyController.find);
 CompanyRoute.get('/findById', authMiddleware, companyController.findById);
 CompanyRoute.put('/update', authMiddleware, companyController.update);
 CompanyRoute.delete('/delete/:id', authMiddleware, companyController.delete);
