@@ -4,7 +4,7 @@ import stateController from "../controllers/state.controller";
 
 const StateRoute = Router();
 
-StateRoute.get("/findAll", authMiddleware, stateController.findAll);
+StateRoute.get("/find", authMiddleware, stateController.findAll);
 StateRoute.get("/findById", authMiddleware, stateController.findById);
 StateRoute.put("/update", authMiddleware, stateController.update);
 StateRoute.delete("/delete/:id", authMiddleware, stateController.delete);

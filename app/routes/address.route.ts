@@ -4,7 +4,7 @@ import addressController from "../controllers/address.controller";
 
 const AddressRoute = Router();
 
-AddressRoute.get('/findAll', authMiddleware, addressController.findAll);
+AddressRoute.get('/find', authMiddleware, addressController.findAll);
 AddressRoute.get('/findById', authMiddleware, addressController.findById);
 AddressRoute.put('/update', authMiddleware, addressController.update);
 AddressRoute.delete('/delete/:id', authMiddleware, addressController.delete);

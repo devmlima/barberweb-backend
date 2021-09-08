@@ -19,6 +19,236 @@
         }
     ],
     "paths": {
+        "/users/find": {
+            "get": {
+                "description": "Busca todos os usuários cadastrados",
+                "sumary": "Busca todos os usuários cadastrados",
+                "tags": ["User"],
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name":"id",
+                        "in": "query",
+                        "description": "Id do usuário para busca",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/findById/{id}": {
+            "get": {
+                "description": "Busca todos os usuários cadastrados por id",
+                "sumary": "Busca todos os usuários cadastrados por id",
+                "tags": ["User"],
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name":"id",
+                        "in": "path",
+                        "description": "Id do usuário para busca",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/update": {
+            "put": {
+                "description": "Atualiza os dados do usuário cadastrado",
+                "sumary": "Atualiza os dados do usuário cadastrado",
+                "tags": ["User"],
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name":"objeto",
+                        "in": "path",
+                        "description": "Objeto que contêm os conteúdos para atualização, é obrigatório enviar o id dentro do objeto.",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "200": {
+                        "description": "Registro atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/delete/{id}": {
+            "delete": {
+                "description": "Apaga o usuário passado por id",
+                "sumary": "Apaga o usuário passado por id",
+                "tags": ["User"],
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name":"id",
+                        "in": "path",
+                        "description": "Id do usuário para busca e deleção",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "400": {
+                        "description": "Usuário não encontrado"
+                    },
+                    "200": {
+                        "description": "Registro excluído com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/signUp": {
+            "post": {
+                "sumary": "Cadastra um novo usuário",
+                "description": "Essa rota será responsável por cadastrar um novo usuário no sistema",
+                "tags": ["User"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "company": {
+                                    "value": {
+                                        "nome": "Matheus",
+                                        "cpf": "78390646048",
+                                        "email": "devmlima@gmail.com",
+                                        "celular": "31973491438",
+                                        "senha": "12345678",
+                                        "dataNascimento": "27/09/1999",
+                                        "empresaId": 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "400": {
+                        "description": "Usuário já cadastrado"
+                    },
+                    "200": {
+                        "description": "Cadastro realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "post": {
+                "sumary": "Acessa o sistema",
+                "description": "Essa rota será responsável por permitir o usuário acessar o sistema",
+                "tags": ["User"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "company": {
+                                    "value": {
+                                        "nome": "Matheus",
+                                        "cpf": "78390646048",
+                                        "email": "devmlima@gmail.com",
+                                        "celular": "31973491438",
+                                        "senha": "123456789",
+                                        "dataNascimento": "27/09/1999",
+                                        "empresaId": 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "400": {
+                        "description": "Usuário já cadastrado"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
         "/company/create": {
             "post": {
                 "sumary": "Cadastra uma nova empresa",
@@ -85,7 +315,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -119,7 +349,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -272,7 +502,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -306,7 +536,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -460,7 +690,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -494,7 +724,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -600,7 +830,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -634,7 +864,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -679,7 +909,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -713,7 +943,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -791,7 +1021,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -825,7 +1055,7 @@
                         "description": "Não autorizado"
                     },
                     "200": {
-                        "description": "Cadastro realizado com sucesso",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -898,236 +1128,6 @@
                                 "schema": {
                                     "type": "object",
                                     "$ref": "#/components/schemas/Profile"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-
-        "/user/find": {
-            "get": {
-                "description": "Busca todos os usuários cadastrados",
-                "sumary": "Busca todos os usuários cadastrados",
-                "tags": ["User"],
-                "security": [{"bearerAuth": []}],
-                "parameters": [
-                    {
-                        "name":"id",
-                        "in": "query",
-                        "description": "Id do usuário para busca",
-                        "required": false
-                    }
-                ],
-                "responses": {
-                    "401": {
-                        "description": "Não autorizado"
-                    },
-                    "200": {
-                        "description": "Cadastro realizado com sucesso",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "items": {
-                                        "$ref": "#/components/schemas/User"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/user/findById/{id}": {
-            "get": {
-                "description": "Busca todos os usuários cadastrados por id",
-                "sumary": "Busca todos os usuários cadastrados por id",
-                "tags": ["User"],
-                "security": [{"bearerAuth": []}],
-                "parameters": [
-                    {
-                        "name":"id",
-                        "in": "path",
-                        "description": "Id do usuário para busca",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "401": {
-                        "description": "Não autorizado"
-                    },
-                    "200": {
-                        "description": "Cadastro realizado com sucesso",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/user/update": {
-            "put": {
-                "description": "Atualiza os dados do usuário cadastrado",
-                "sumary": "Atualiza os dados do usuário cadastrado",
-                "tags": ["User"],
-                "security": [{"bearerAuth": []}],
-                "parameters": [
-                    {
-                        "name":"objeto",
-                        "in": "path",
-                        "description": "Objeto que contêm os conteúdos para atualização, é obrigatório enviar o id dentro do objeto.",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "401": {
-                        "description": "Não autorizado"
-                    },
-                    "200": {
-                        "description": "Registro atualizado com sucesso",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/user/delete/{id}": {
-            "delete": {
-                "description": "Apaga o usuário passado por id",
-                "sumary": "Apaga o usuário passado por id",
-                "tags": ["User"],
-                "security": [{"bearerAuth": []}],
-                "parameters": [
-                    {
-                        "name":"id",
-                        "in": "path",
-                        "description": "Id do usuário para busca e deleção",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "401": {
-                        "description": "Não autorizado"
-                    },
-                    "400": {
-                        "description": "Usuário não encontrado"
-                    },
-                    "200": {
-                        "description": "Registro excluído com sucesso",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/user/signUp": {
-            "post": {
-                "sumary": "Cadastra um novo usuário",
-                "description": "Essa rota será responsável por cadastrar um novo usuário no sistema",
-                "tags": ["User"],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/User"
-                            },
-                            "examples": {
-                                "company": {
-                                    "value": {
-                                        "nome": "Matheus",
-                                        "cpf": "78390646048",
-                                        "email": "devmlima@gmail.com",
-                                        "celular": "31973491438",
-                                        "senha": "123456789",
-                                        "dataNascimento": "27/09/1999",
-                                        "empresaId": 2
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "401": {
-                        "description": "Não autorizado"
-                    },
-                    "400": {
-                        "description": "Usuário já cadastrado"
-                    },
-                    "200": {
-                        "description": "Cadastro realizado com sucesso",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/user/login": {
-            "post": {
-                "sumary": "Acessa o sistema",
-                "description": "Essa rota será responsável por permitir o usuário acessar o sistema",
-                "tags": ["User"],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/User"
-                            },
-                            "examples": {
-                                "company": {
-                                    "value": {
-                                        "nome": "Matheus",
-                                        "cpf": "78390646048",
-                                        "email": "devmlima@gmail.com",
-                                        "celular": "31973491438",
-                                        "senha": "123456789",
-                                        "dataNascimento": "27/09/1999",
-                                        "empresaId": 2
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "401": {
-                        "description": "Não autorizado"
-                    },
-                    "400": {
-                        "description": "Usuário já cadastrado"
-                    },
-                    "200": {
-                        "description": "Cadastro realizado com sucesso",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "$ref": "#/components/schemas/User"
                                 }
                             }
                         }

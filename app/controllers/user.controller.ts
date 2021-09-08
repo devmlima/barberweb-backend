@@ -3,7 +3,7 @@ import { IUser, User } from "./../models/user.model";
 import { Request, Response } from "express";
 
 class UserController {
-  async findAll(request: Request, response: Response): Promise<Response> {
+  async find(request: Request, response: Response): Promise<Response> {
     const query: any = request.query;
 
     try {

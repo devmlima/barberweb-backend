@@ -44,14 +44,14 @@ export class App {
     }
 
     private routes() {
-        this.express.use('/users', swaggerUi.serve, swaggerUi.setup(swaggerDocs), UserRoute);
-        this.express.use('/users', UserRoute);
+        this.express.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
         
-        this.express.use('/company', CompanyRoute)
-        this.express.use('/address', AddressRoute)
-        this.express.use('/city', CityRoute)
-        this.express.use('/client', ClientRoute)
-        this.express.use('/profile', ProfileRoute)
-        this.express.use('/state', StateRoute)
+        this.express.use('/users', UserRoute);
+        this.express.use('/company', CompanyRoute);
+        this.express.use('/address', AddressRoute);
+        this.express.use('/city', CityRoute);
+        this.express.use('/client', ClientRoute);
+        this.express.use('/profile', ProfileRoute);
+        this.express.use('/state', StateRoute);
     }
 }
