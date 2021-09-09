@@ -9,7 +9,7 @@ export interface IAddress {
   rua: string;
   numero: number;
   cep: string;
-  estadoId: number;
+  estadoId: string;
   cidadeId: number;
   dataInclusao?: Date;
   dataAlteracao?: Date;
@@ -71,7 +71,7 @@ export class Address extends BaseModel<Address> implements IAddress {
     comment: "Identificador do estado",
   })
   @ForeignKey(() => State)
-  estadoId: number;
+  estadoId: string;
 
   @Column({
     type: DataType.INTEGER,

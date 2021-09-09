@@ -1,4 +1,5 @@
-import { Table, Column, DataType } from "sequelize-typescript";
+import { State } from './state.model';
+import { Table, Column, DataType, ForeignKey } from "sequelize-typescript";
 import { BaseModel } from "./Base.model";
 
 export interface ICity {
@@ -31,6 +32,15 @@ export class City extends BaseModel<City> implements ICity {
     comment: "Nome completo da cidade",
   })
   descricao: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    field: "estadoId",
+    comment: "Identificador da empresa",
+  })
+  @ForeignKey(() => State)
+  estadoId: string;
 
   @Column({
     type: DataType.DATE,

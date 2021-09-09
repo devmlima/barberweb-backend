@@ -2,9 +2,8 @@ import { Table, Column, DataType } from "sequelize-typescript";
 import { BaseModel } from "./Base.model";
 
 export interface IState {
-  id: number;
-  descricao: string;
   sigla: string;
+  descricao: string;
   dataInclusao?: Date;
   dataAlteracao?: Date;
 }
@@ -18,13 +17,12 @@ export interface IState {
 })
 export class State extends BaseModel<State> implements IState {
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
     allowNull: false,
-    autoIncrement: true,
     primaryKey: true,
-    comment: "Identificador único da tabela",
+    comment: "Sigla do estado e identificador único da tabela",
   })
-  id: number;
+  sigla: string;
 
   @Column({
     type: DataType.STRING,
@@ -32,13 +30,6 @@ export class State extends BaseModel<State> implements IState {
     comment: "Nome completo do estado",
   })
   descricao: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    comment: "Sigla do estado",
-  })
-  sigla: string;
 
   @Column({
     type: DataType.DATE,

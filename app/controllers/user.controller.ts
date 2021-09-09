@@ -32,7 +32,7 @@ class UserController {
     const body: IUser = request.body;
     try {
       const instance = await User.update(body, { where: { id: body.id } });
-      return response.json(instance);
+      return response.json(true);
     } catch (e) {
       throw new Error("Erro ao atualizar registro");
     }

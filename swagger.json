@@ -99,6 +99,23 @@
                         "required": true
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "company": {
+                                    "value": {
+                                        "id": 4,
+                                        "nome": "Matheus Lima"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "401": {
                         "description": "Não autorizado"
@@ -223,7 +240,7 @@
                                         "cpf": "78390646048",
                                         "email": "devmlima@gmail.com",
                                         "celular": "31973491438",
-                                        "senha": "123456789",
+                                        "senha": "12345678",
                                         "dataNascimento": "27/09/1999",
                                         "empresaId": 2
                                     }
@@ -240,15 +257,7 @@
                         "description": "Usuário já cadastrado"
                     },
                     "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
+                        "description": "OK"
                     }
                 }
             }
