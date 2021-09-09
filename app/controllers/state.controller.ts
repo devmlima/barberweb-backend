@@ -1,5 +1,6 @@
 import { State, IState } from '../models/state.model';
 import { Request, Response } from "express";
+import { get } from 'lodash';
 
 class StateController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -14,7 +15,7 @@ class StateController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, 'params.id', null);
     
     try {
       const user = await State.findOne({ where: { id } as any });

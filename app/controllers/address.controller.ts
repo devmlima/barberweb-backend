@@ -1,6 +1,7 @@
 import { Address, IAddress } from './../models/address.model';
 import { BadRequestException } from "../shared/exceptions";
 import { Request, Response } from "express";
+import { get } from 'lodash';
 
 class AddressController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -15,7 +16,7 @@ class AddressController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, 'params.id', null);
     
     try {
       const user = await Address.findOne({ where: { id } as any });

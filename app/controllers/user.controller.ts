@@ -1,6 +1,9 @@
+import { Company } from "./../models/company.model";
 import { BadRequestException } from "./../shared/exceptions";
 import { IUser, User } from "./../models/user.model";
 import { Request, Response } from "express";
+import { Op } from "../../database";
+import { get } from "lodash";
 
 class UserController {
   async find(request: Request, response: Response): Promise<Response> {
@@ -15,7 +18,8 @@ class UserController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const id = request.query;
+    const id = get(request, 'params.id', null);
+    
     try {
       const user = await User.findOne({ where: { id: id } });
       return response.json(user);
@@ -67,8 +71,22 @@ class UserController {
 
   async signUp(request: Request, response: Response): Promise<Response> {
     const body = request.body;
+    const company = body.empresa;
 
     try {
+      let instanceCompany = await Company.findOne({
+        where: { cpfCnpj: { [Op.iLike]: company.cpfCnpj } } as any,
+      });
+      
+      if (instanceCompany) {
+        response
+          .status(401)
+          .json("Já existe uma empresa cadastrada com o documento informado!");
+        return;
+      }
+
+      instanceCompany = await Company.create(company as any);
+
       const params: any = {
         nome: body.nome,
         cpf: body.cpf,
@@ -76,17 +94,27 @@ class UserController {
         celular: body.celular,
         senha: body.senha,
         dataNascimento: body.dataNascimento,
-        empresaId: body.empresaId,
+        empresaId: instanceCompany.id,
       };
 
-      const instance = await User.create(params as any);
+      let instance = await User.findOne({
+        where: { cpf: { [Op.iLike]: body.cpf } } as any,
+      });
+
+      if (instance) {
+        response
+          .status(401)
+          .json("Já existe uma empresa cadastrada com o documento informado!");
+        return;
+      }
+
+      instance = await User.create(params as any);
       const { token, expiresIn } = instance.generateToken();
 
       return response
         .status(200)
         .json({ ...instance.json(), token, expiresIn });
     } catch (e) {
-      console.log(e);
       throw new Error("Erro ao criar registro");
     }
   }

@@ -1,5 +1,6 @@
 import { City, ICity } from './../models/city.model';
 import { Request, Response } from "express";
+import { get } from 'lodash';
 
 class CityController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -14,7 +15,7 @@ class CityController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, 'params.id', null);
     
     try {
       const user = await City.findOne({ where: { id } as any });

@@ -172,7 +172,12 @@
                                         "celular": "31973491438",
                                         "senha": "12345678",
                                         "dataNascimento": "27/09/1999",
-                                        "empresaId": 2
+                                        "empresa": {
+                                            "cpfCnpj": "16680422000195",
+                                            "razaoSocial": "Barbearia WEB",
+                                            "nomeFantasia": "Barber",
+                                            "telefone": "31973491438"
+                                        }
                                     }
                                 }
                             }

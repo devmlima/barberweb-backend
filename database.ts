@@ -80,3 +80,5 @@ sequelize.addModels([
 export const sequelizeAuthenticate = async () => {
   return await sequelize.authenticate();
 };
+
+export const Op = OpSequelize;

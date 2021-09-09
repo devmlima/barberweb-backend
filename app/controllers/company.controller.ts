@@ -1,6 +1,7 @@
 import { Company, ICompany } from "./../models/company.model";
 import { BadRequestException } from "./../shared/exceptions";
 import { Request, Response } from "express";
+import { get } from "lodash";
 
 class CompanyController {
   async find(request: Request, response: Response): Promise<Response> {
@@ -15,7 +16,8 @@ class CompanyController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, 'params.id', null);
+
     try {
       const user = await Company.findOne({ where: { id } as any });
       return response.json(user);

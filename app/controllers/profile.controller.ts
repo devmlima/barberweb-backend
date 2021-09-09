@@ -1,5 +1,6 @@
 import { Profile, IProfile } from '../models/profile.model';
 import { Request, Response } from "express";
+import { get } from 'lodash';
 
 class ProfileController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -14,7 +15,7 @@ class ProfileController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, 'params.id', null);
     
     try {
       const user = await Profile.findOne({ where: { id } as any });

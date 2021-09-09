@@ -1,5 +1,6 @@
 import { Client, IClient } from '../models/client.model';
 import { Request, Response } from "express";
+import { get } from 'lodash';
 
 class ClientController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -14,7 +15,7 @@ class ClientController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, 'params.id', null);
     
     try {
       const user = await Client.findOne({ where: { id } as any });
