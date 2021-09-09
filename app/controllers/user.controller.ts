@@ -39,12 +39,14 @@ class UserController {
   }
 
   async delete(request: Request, response: Response): Promise<Response> {
-    const id = request.body;
+    const id = get(request, 'params.id', null);
+
     try {
-      const instance = await User.destroy({ where: id });
-      return response.json(instance);
+      const user = await User.findOne({ where: { id: id } });
+      user.destroy();
+      return response.status(200).json(true);
     } catch (e) {
-      throw new Error("Erro ao excluir registro");
+      return response.status(500).json('Erro ao excluir registro');
     }
   }
 
@@ -104,7 +106,43 @@ class UserController {
       if (instance) {
         response
           .status(401)
-          .json("Já existe uma empresa cadastrada com o documento informado!");
+          .json("Já existe um usuário cadastrado com o documento informado!");
+        return;
+      }
+
+      instance = await User.create(params as any);
+      const { token, expiresIn } = instance.generateToken();
+
+      return response
+        .status(200)
+        .json({ ...instance.json(), token, expiresIn });
+    } catch (e) {
+      throw new Error("Erro ao criar registro");
+    }
+  }
+
+  async create(request: Request, response: Response): Promise<Response> {
+    const body = request.body;
+
+    try {
+      const params: any = {
+        nome: body.nome,
+        cpf: body.cpf,
+        email: body.email,
+        celular: body.celular,
+        senha: body.senha,
+        dataNascimento: body.dataNascimento,
+        empresaId: body.empresaId,
+      };
+
+      let instance = await User.findOne({
+        where: { cpf: { [Op.iLike]: body.cpf } } as any,
+      });
+
+      if (instance) {
+        response
+          .status(401)
+          .json("Já existe um usuário cadastrado com o documento informado!");
         return;
       }
 
