@@ -9,7 +9,7 @@ class AddressController {
 
     try {
       const address = await Address.findAll();
-      return response.json(address);
+      return response.status(200).json(address);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }
@@ -19,8 +19,8 @@ class AddressController {
     const id = get(request, 'params.id', null);
     
     try {
-      const user = await Address.findOne({ where: { id } as any });
-      return response.json(user);
+      const address = await Address.findOne({ where: { id } as any });
+      return response.status(200).json(address);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }
@@ -30,21 +30,22 @@ class AddressController {
     const body: IAddress = request.body;
 
     try {
-      const instance = await Address.update(body, {
+      await Address.update(body, {
         where: { id: body.id } as any,
       });
-      return response.json(instance);
+      return response.json(true);
     } catch (e) {
       return response.status(500).send("Erro ao atualizar registro");
     }
   }
 
   async delete(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, "params.id", null);
 
     try {
-      const instance = await Address.destroy({ where: id } as any);
-      return response.json(instance);
+      const address = await Address.findOne({ where: { id: id } as any });
+      address.destroy();
+      return response.status(200).json(true);
     } catch (e) {
       return response.status(500).send("Erro ao excluir registro");
     }
@@ -64,9 +65,8 @@ class AddressController {
       };
 
       const instance = await Address.create(params as any);
-      return response.json(instance);
+      return response.status(200).json(instance);
     } catch (e) {
-      console.log(e);
       return response.status(500).send("Erro ao criar registro");
     }
   }

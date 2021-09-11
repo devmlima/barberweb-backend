@@ -5,7 +5,7 @@ import companyController from "../controllers/company.controller";
 const CompanyRoute = Router();
 
 CompanyRoute.get('/find', authMiddleware, companyController.find);
-CompanyRoute.get('/findById', authMiddleware, companyController.findById);
+CompanyRoute.get('/findById/:id', authMiddleware, companyController.findById);
 CompanyRoute.put('/update', authMiddleware, companyController.update);
 CompanyRoute.delete('/delete/:id', authMiddleware, companyController.delete);
 CompanyRoute.post('/create', authMiddleware, companyController.create);

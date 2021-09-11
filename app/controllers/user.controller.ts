@@ -11,42 +11,79 @@ class UserController {
 
     try {
       const user = await User.findAll();
-      return response.json(user);
+      return response.status(200).json(user);
     } catch (e) {
-      throw new Error("Erro ao pesquisar registro");
+      return response.status(500).send("Erro ao pesquisar registro");
     }
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const id = get(request, 'params.id', null);
-    
+    const id = get(request, "params.id", null);
+
     try {
-      const user = await User.findOne({ where: { id: id } });
+      const user = await User.findOne({ where: { id: id } as any });
       return response.json(user);
     } catch (e) {
-      throw new Error("Erro ao pesquisar registro");
+      return response.status(500).send("Erro ao pesquisar registro");
     }
   }
 
   async update(request: Request, response: Response): Promise<Response> {
     const body: IUser = request.body;
+
     try {
-      const instance = await User.update(body, { where: { id: body.id } });
+      await User.update(body, { where: { id: body.id } as any });
       return response.json(true);
     } catch (e) {
-      throw new Error("Erro ao atualizar registro");
+      return response.status(500).send("Erro ao atualizar registro");
     }
   }
 
   async delete(request: Request, response: Response): Promise<Response> {
-    const id = get(request, 'params.id', null);
+    const id = get(request, "params.id", null);
 
     try {
       const user = await User.findOne({ where: { id: id } });
       user.destroy();
       return response.status(200).json(true);
     } catch (e) {
-      return response.status(500).json('Erro ao excluir registro');
+      return response.status(500).json("Erro ao excluir registro");
+    }
+  }
+
+  async create(request: Request, response: Response): Promise<Response> {
+    const body = request.body;
+
+    try {
+      const params: any = {
+        nome: body.nome,
+        cpf: body.cpf,
+        email: body.email,
+        celular: body.celular,
+        senha: body.senha,
+        dataNascimento: body.dataNascimento,
+        empresaId: body.empresaId,
+      };
+
+      let instance = await User.findOne({
+        where: { email: { [Op.iLike]: body.email } } as any,
+      });
+
+      if (instance) {
+        response
+          .status(401)
+          .json("Já existe um usuário cadastrado com o email informado!");
+        return;
+      }
+
+      instance = await User.create(params as any);
+      const { token, expiresIn } = instance.generateToken();
+
+      return response
+        .status(200)
+        .json({ ...instance.json(), token, expiresIn });
+    } catch (e) {
+      throw new Error("Erro ao criar registro");
     }
   }
 
@@ -79,7 +116,7 @@ class UserController {
       let instanceCompany = await Company.findOne({
         where: { cpfCnpj: { [Op.iLike]: company.cpfCnpj } } as any,
       });
-      
+
       if (instanceCompany) {
         response
           .status(401)
@@ -97,42 +134,6 @@ class UserController {
         senha: body.senha,
         dataNascimento: body.dataNascimento,
         empresaId: instanceCompany.id,
-      };
-
-      let instance = await User.findOne({
-        where: { cpf: { [Op.iLike]: body.cpf } } as any,
-      });
-
-      if (instance) {
-        response
-          .status(401)
-          .json("Já existe um usuário cadastrado com o documento informado!");
-        return;
-      }
-
-      instance = await User.create(params as any);
-      const { token, expiresIn } = instance.generateToken();
-
-      return response
-        .status(200)
-        .json({ ...instance.json(), token, expiresIn });
-    } catch (e) {
-      throw new Error("Erro ao criar registro");
-    }
-  }
-
-  async create(request: Request, response: Response): Promise<Response> {
-    const body = request.body;
-
-    try {
-      const params: any = {
-        nome: body.nome,
-        cpf: body.cpf,
-        email: body.email,
-        celular: body.celular,
-        senha: body.senha,
-        dataNascimento: body.dataNascimento,
-        empresaId: body.empresaId,
       };
 
       let instance = await User.findOne({

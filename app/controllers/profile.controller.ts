@@ -8,7 +8,7 @@ class ProfileController {
 
     try {
       const profile = await Profile.findAll();
-      return response.json(profile);
+      return response.status(200).json(profile);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }
@@ -18,8 +18,8 @@ class ProfileController {
     const id = get(request, 'params.id', null);
     
     try {
-      const user = await Profile.findOne({ where: { id } as any });
-      return response.json(user);
+      const profile = await Profile.findOne({ where: { id } as any });
+      return response.status(200).json(profile);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }
@@ -29,21 +29,22 @@ class ProfileController {
     const body: IProfile = request.body;
 
     try {
-      const instance = await Profile.update(body, {
+      await Profile.update(body, {
         where: { id: body.id } as any,
       });
-      return response.json(instance);
+      return response.status(200).json(true);
     } catch (e) {
       return response.status(500).send("Erro ao atualizar registro");
     }
   }
 
   async delete(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, "params.id", null);
 
     try {
-      const instance = await Profile.destroy({ where: id } as any);
-      return response.json(instance);
+      const profile = await Profile.findOne({ where: { id: id } as any });
+      profile.destroy();
+      return response.status(200).json(true);
     } catch (e) {
       return response.status(500).send("Erro ao excluir registro");
     }
@@ -54,7 +55,7 @@ class ProfileController {
 
     try {
       const instance = await Profile.create(body as any);
-      return response.json(instance);
+      return response.status(200).json(instance);
     } catch (e) {
       console.log(e);
       return response.status(500).send("Erro ao criar registro");

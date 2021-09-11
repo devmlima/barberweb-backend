@@ -8,7 +8,7 @@ class ClientController {
 
     try {
       const client = await Client.findAll();
-      return response.json(client);
+      return response.status(200).json(client);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }
@@ -18,8 +18,8 @@ class ClientController {
     const id = get(request, 'params.id', null);
     
     try {
-      const user = await Client.findOne({ where: { id } as any });
-      return response.json(user);
+      const client = await Client.findOne({ where: { id } as any });
+      return response.status(200).json(client);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }
@@ -29,21 +29,22 @@ class ClientController {
     const body: IClient = request.body;
 
     try {
-      const instance = await Client.update(body, {
+      await Client.update(body, {
         where: { id: body.id } as any,
       });
-      return response.json(instance);
+      return response.status(200).json(true);
     } catch (e) {
       return response.status(500).send("Erro ao atualizar registro");
     }
   }
 
   async delete(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, "params.id", null);
 
     try {
-      const instance = await Client.destroy({ where: id } as any);
-      return response.json(instance);
+      const client = await Client.findOne({ where: { id: id } as any });
+      client.destroy();
+      return response.status(200).json(true);
     } catch (e) {
       return response.status(500).send("Erro ao excluir registro");
     }
@@ -54,9 +55,8 @@ class ClientController {
 
     try {
       const instance = await Client.create(body as any);
-      return response.json(instance);
+      return response.status(200).json(instance);
     } catch (e) {
-      console.log(e);
       return response.status(500).send("Erro ao criar registro");
     }
   }

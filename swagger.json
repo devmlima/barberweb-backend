@@ -232,16 +232,13 @@
                                 "company": {
                                     "value": {
                                         "nome": "Matheus",
-                                        "cpf": "78390646048",
                                         "email": "devmlima@gmail.com",
                                         "celular": "31973491438",
                                         "senha": "12345678",
                                         "dataNascimento": "27/09/1999",
                                         "empresa": {
                                             "cpfCnpj": "16680422000195",
-                                            "razaoSocial": "Barbearia WEB",
-                                            "nomeFantasia": "Barber",
-                                            "telefone": "31973491438"
+                                            "razaoSocial": "Barbearia WEB"
                                         }
                                     }
                                 }

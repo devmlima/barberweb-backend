@@ -8,7 +8,7 @@ class StateController {
 
     try {
       const state = await State.findAll();
-      return response.json(state);
+      return response.status(200).json(state);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }
@@ -18,8 +18,8 @@ class StateController {
     const id = get(request, 'params.id', null);
     
     try {
-      const user = await State.findOne({ where: { id } as any });
-      return response.json(user);
+      const state = await State.findOne({ where: { id } as any });
+      return response.status(200).json(state);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }

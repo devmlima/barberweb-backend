@@ -16,7 +16,7 @@ class CompanyController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const id = get(request, 'params.id', null);
+    const id = get(request, "params.id", null);
 
     try {
       const user = await Company.findOne({ where: { id } as any });
@@ -29,10 +29,10 @@ class CompanyController {
   async update(request: Request, response: Response): Promise<Response> {
     const body: ICompany = request.body;
     try {
-      const instance = await Company.update(body, {
+      await Company.update(body, {
         where: { id: body.id } as any,
       });
-      return response.json(instance);
+      return response.json(true);
     } catch (e) {
       return response.status(500).send("Erro ao atualizar registro");
     }
@@ -42,8 +42,9 @@ class CompanyController {
     const { id } = request.query;
 
     try {
-      const instance = await Company.destroy({ where: id } as any);
-      return response.json(instance);
+      const company = await Company.findOne({ where: { id: id } });
+      company.destroy();
+      return response.status(200).json(true);
     } catch (e) {
       return response.status(500).send("Erro ao excluir registro");
     }
@@ -51,6 +52,7 @@ class CompanyController {
 
   async create(request: Request, response: Response): Promise<Response> {
     const body = request.body;
+
     try {
       const params: any = {
         cpfCnpj: body.cpfCnpj,
@@ -59,17 +61,17 @@ class CompanyController {
         nomeFantasia: body.nomeFantasia,
         telefone: body.telefone,
       };
+
       const company = Company.findOne({
         where: { cpfCnpj: params.cpfCnpj } as any,
       });
 
       if (company) {
-        return response.status(400).send("Empresa já cadastrada!");  
+        return response.status(401).json("Empresa já cadastrada!");
       }
       const instance = await Company.create(params as any);
       return response.status(200).json(instance);
     } catch (e) {
-      console.log(e);
       return response.status(500).send("Erro ao criar registro");
     }
   }
