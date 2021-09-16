@@ -1,4 +1,4 @@
-import { setUsuarioLogado } from './tenant';
+import { setUserLogged } from './tenant';
 import { User } from './../models/user.model';
 import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
@@ -34,8 +34,8 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
     }
   }
 
-  req.usuarioLogado = userModel;
-  setUsuarioLogado(userModel);
+  req.userLogged = userModel;
+  setUserLogged(userModel);
   next();
   // PASSAR FUNÇÃO DE VERIFICAÇÃO DE PERMISSÕES DE ACESSO AQUI
 };

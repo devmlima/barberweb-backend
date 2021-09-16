@@ -12,5 +12,7 @@ UserRoute.post('/create', userController.create);
 UserRoute.post('/signUp', userController.signUp);
 UserRoute.post('/login', userController.login);
 
+UserRoute.get('/dataUser/', authMiddleware, userController.findById);
+
 export default UserRoute;
 

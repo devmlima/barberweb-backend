@@ -157,6 +157,14 @@ class UserController {
       throw new Error("Erro ao criar registro");
     }
   }
+
+  async dataUser(request: Request, response: Response): Promise<Response> {
+    console.log('Implementar...')
+
+    return response
+    .status(500)
+    .json('Rota não implementada');
+  }
 }
 
 export default new UserController();

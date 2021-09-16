@@ -1,13 +1,13 @@
-let usuarioLogado: any;
+let userLogged: any;
 
-export const getUsuarioLogado = (): any => {
-    return usuarioLogado;
+export const getUserLogged = (): any => {
+    return userLogged;
 }
 
-export const clearUsuarioLogado = (): void => {
-    usuarioLogado = null;
+export const clearUserLogged = (): void => {
+    userLogged = null;
 }
 
-export const setUsuarioLogado = (usuario): void => {
-    usuarioLogado = usuario;
+export const setUserLogged = (user): void => {
+    userLogged = user;
 }

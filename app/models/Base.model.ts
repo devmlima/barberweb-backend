@@ -1,4 +1,4 @@
-import { getUsuarioLogado } from '../shared/tenant';
+import { getUserLogged } from '../shared/tenant';
 import { Model, BeforeBulkCreate, BeforeValidate } from "sequelize-typescript";
 
 export class BaseModel<T> extends Model<BaseModel<T>> {
@@ -8,8 +8,8 @@ export class BaseModel<T> extends Model<BaseModel<T>> {
     @BeforeValidate
     @BeforeBulkCreate
     static aplicaTenant<T>(instance: BaseModel<T> | BaseModel<T>[]) {
-        const usuarioLogado = getUsuarioLogado();
-        if (!usuarioLogado) {
+        const userLogged = getUserLogged();
+        if (!userLogged) {
             return;
         }
         if (!Array.isArray(instance)) {
@@ -17,7 +17,7 @@ export class BaseModel<T> extends Model<BaseModel<T>> {
         }
         if (this.tenantColumn) {
             for (const item of instance) {
-                item[this.tenantColumn] = usuarioLogado.id;
+                item[this.tenantColumn] = userLogged.id;
             }
         }
     }
