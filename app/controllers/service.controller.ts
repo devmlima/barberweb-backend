@@ -1,14 +1,18 @@
-import { Company, ICompany } from "./../models/company.model";
-import { BadRequestException } from "./../shared/exceptions";
-import { Request, Response } from "express";
+import { IService, Service } from "./../models/service.model";
+import { Response } from "express";
+import { Request } from "express";
 import { get } from "lodash";
 
-class CompanyController {
+class ServiceController {
   async find(request: Request, response: Response): Promise<Response> {
     const query: any = request.query;
 
     try {
-      const company = await Company.findAll();
+      const company = await Service.findAll({
+        where: {
+          // empresaId: request.userLogged.empresaId
+        },
+      } as any);
       return response.json(company);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -19,7 +23,7 @@ class CompanyController {
     const id = get(request, "params.id", null);
 
     try {
-      const user = await Company.findOne({ where: { id } as any });
+      const user = await Service.findOne({ where: { id } as any });
       return response.json(user);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -27,9 +31,11 @@ class CompanyController {
   }
 
   async update(request: Request, response: Response): Promise<Response> {
-    const body: ICompany = request.body;
+    const body: IService = request.body;
+    const userLogged: any = request.headers.userLogged;
+    
     try {
-      await Company.update(body, {
+      await Service.update(body, {
         where: { id: body.id } as any,
       });
       return response.json(true);
@@ -42,8 +48,8 @@ class CompanyController {
     const { id } = request.query;
 
     try {
-      const company = await Company.findOne({ where: { id: id } });
-      company.destroy();
+      const service = await Service.findOne({ where: { id: id } });
+      service.destroy();
       return response.status(200).json(true);
     } catch (e) {
       return response.status(500).send("Erro ao excluir registro");
@@ -52,24 +58,15 @@ class CompanyController {
 
   async create(request: Request, response: Response): Promise<Response> {
     const body = request.body;
+    const userLogged: any = request.headers.userLogged;
 
     try {
       const params: any = {
-        cpfCnpj: body.cpfCnpj,
-        enderecoId: body.enderecoId,
-        razaoSocial: body.razaoSocial,
-        nomeFantasia: body.nomeFantasia,
-        telefone: body.telefone,
+        descricao: body.descricao,
+        empresaId: userLogged.empresaId,
       };
 
-      const company = await Company.findOne({
-        where: { cpfCnpj: params.cpfCnpj } as any,
-      });
-
-      if (company) {
-        return response.status(401).json("Empresa já cadastrada!");
-      }
-      const instance = await Company.create(params as any);
+      const instance = await Service.create(params as any);
       return response.status(200).json(instance);
     } catch (e) {
       return response.status(500).send("Erro ao criar registro");
@@ -77,4 +74,4 @@ class CompanyController {
   }
 }
 
-export default new CompanyController();
+export default new ServiceController();

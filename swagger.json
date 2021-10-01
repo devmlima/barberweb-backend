@@ -106,9 +106,9 @@
                                 "$ref": "#/components/schemas/User"
                             },
                             "examples": {
-                                "company": {
+                                "user": {
                                     "value": {
-                                        "id": 4,
+                                        "id": 6,
                                         "nome": "Matheus Lima"
                                     }
                                 }
@@ -1193,6 +1193,183 @@
                     }
                 }
             }
+        },
+
+        "/service/create": {
+            "post": {
+                "sumary": "Cadastra um novo serviço",
+                "description": "Essa rota será responsável por cadastrar um novo serviço no sistema",
+                "tags": ["Service"],
+                "security": [{"bearerAuth": []}],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Service"
+                            },
+                            "examples": {
+                                "company": {
+                                    "value": {
+                                        "descricao": "Corte e Barba"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "400": {
+                        "description": "Empresa já cadastrada"
+                    },
+                    "200": {
+                        "description": "Cadastro realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Company"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/service/find": {
+            "get": {
+                "description": "Busca todos os serviços cadastrados",
+                "sumary": "Busca todos os serviços cadastrados",
+                "tags": ["Service"],
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name":"id",
+                        "in": "query",
+                        "description": "Id do serviço para busca",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Service"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/service/findById/{id}": {
+            "get": {
+                "description": "Busca todos os serviços cadastrados por id",
+                "sumary": "Busca todos os serviços cadastrados por id",
+                "tags": ["Service"],
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name":"id",
+                        "in": "path",
+                        "description": "Id do serviço para busca",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Service"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/service/update": {
+            "put": {
+                "description": "Atualiza os dados do serviço cadastrado",
+                "sumary": "Atualiza os dados do serviço cadastrado",
+                "tags": ["Service"],
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name":"objeto",
+                        "in": "path",
+                        "description": "Objeto que contêm os conteúdos para atualização, é obrigatório enviar o id dentro do objeto.",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "200": {
+                        "description": "Registro atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Service"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/service/delete/{id}": {
+            "delete": {
+                "description": "Apaga o serviço passado por id",
+                "sumary": "Apaga o serviço passado por id",
+                "tags": ["Service"],
+                "security": [{"bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name":"id",
+                        "in": "path",
+                        "description": "Id do serviço para busca e deleção",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "400": {
+                        "description": "Seviço não encontrado"
+                    },
+                    "200": {
+                        "description": "Registro excluído com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Company"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -1337,6 +1514,17 @@
                     },
                     "empresaId": {
                         "type": "number"
+                    },
+                    "id": {
+                        "type": "number"
+                    }
+                }
+            },
+            "Service": {
+                "type": "object",
+                "properties": {
+                    "descricao": {
+                        "type": "string"
                     },
                     "id": {
                         "type": "number"

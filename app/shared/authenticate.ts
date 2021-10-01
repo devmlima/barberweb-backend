@@ -12,7 +12,7 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
   const decoded = jwt.decode(token, { complete: true });
   const user = new User();
 
-  let userModel = null;
+  let userModel: User = null;
   if (decoded) {
     userModel = await User.findOne({ where: { id: decoded.payload.sub } });
   }
@@ -34,7 +34,7 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
     }
   }
 
-  req.userLogged = userModel;
+  req.headers.userLogged = userModel;
   setUserLogged(userModel);
   next();
   // PASSAR FUNÇÃO DE VERIFICAÇÃO DE PERMISSÕES DE ACESSO AQUI

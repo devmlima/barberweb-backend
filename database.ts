@@ -8,6 +8,7 @@ import { User } from './app/models/user.model';
 import { Sequelize } from "sequelize-typescript";
 import { Op as OpSequelize } from "sequelize";
 import * as dotenv from "dotenv";
+import { Service } from './app/models/service.model';
 
 dotenv.config();
 
@@ -74,7 +75,8 @@ sequelize.addModels([
   City,
   Client,
   Profile,
-  State
+  State,
+  Service,
 ])
 
 export const sequelizeAuthenticate = async () => {

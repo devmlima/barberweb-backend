@@ -10,6 +10,7 @@ import ProfileRoute from './app/routes/profile.route';
 import StateRoute from './app/routes/state.route';
 import swaggerUi from "swagger-ui-express";
 import swaggerDocs from "./swagger.json";
+import ServiceRoute from './app/routes/service.route';
 
 export class App {
     private express: express.Application;
@@ -53,5 +54,8 @@ export class App {
         this.express.use('/client', ClientRoute);
         this.express.use('/profile', ProfileRoute);
         this.express.use('/state', StateRoute);
+        this.express.use('/service', ServiceRoute);
+
+        // @TODO CRIAR CRUD E DOCUMENTAR DE SERVIÇOS E AGENDAMENTOS
     }
 }

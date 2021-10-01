@@ -90,15 +90,15 @@ class UserController {
   async login(request: Request, response: Response): Promise<Response> {
     const body: IUser = request.body;
 
-    if (!body) throw new BadRequestException("Dados de usuário não informado!");
-    if (!body.email) throw new BadRequestException("Email não informado!");
-    if (!body.senha) throw new BadRequestException("Senha não informada!");
+    if (!body) return response.status(400).json("Dados de usuário não informado!");
+    if (!body.email) return response.status(400).json("Email não informado!");
+    if (!body.senha) response.status(400).json("Senha não informada!");
 
     const user = await User.findOne({ where: { email: body.email } as any });
-    if (!user) throw new BadRequestException("Usuário não encontrado!");
+    if (!user) response.status(400).json("Usuário não encontrado!");
 
     if (!user.compareSenha(body.senha)) {
-      throw new BadRequestException("Senha inválida");
+      response.status(400).json("Senha inválida");
     }
 
     const instance = user.json();
@@ -137,7 +137,7 @@ class UserController {
       };
 
       let instance = await User.findOne({
-        where: { cpf: { [Op.iLike]: body.cpf } } as any,
+        where: { email: { [Op.iLike]: body.email } } as any,
       });
 
       if (instance) {
@@ -154,16 +154,14 @@ class UserController {
         .status(200)
         .json({ ...instance.json(), token, expiresIn });
     } catch (e) {
-      throw new Error("Erro ao criar registro");
+      response.status(400).json("Erro ao criar registro");
     }
   }
 
   async dataUser(request: Request, response: Response): Promise<Response> {
-    console.log('Implementar...')
+    console.log("Implementar...");
 
-    return response
-    .status(500)
-    .json('Rota não implementada');
+    return response.status(500).json("Rota não implementada");
   }
 }
 

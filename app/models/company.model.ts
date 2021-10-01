@@ -57,7 +57,7 @@ export class Company extends BaseModel<Company> implements ICompany {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
     field: "nome_fantasia",
     comment: "Nome fantasia da empresa",
   })
