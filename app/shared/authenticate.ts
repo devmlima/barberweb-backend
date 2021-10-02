@@ -11,7 +11,8 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
     .trim();
   const decoded = jwt.decode(token, { complete: true });
   const user = new User();
-
+  
+  if (!token) return res.status(401).send("Usuário não autenticado!");
   let userModel: User = null;
   if (decoded) {
     userModel = await User.findOne({ where: { id: decoded.payload.sub } });

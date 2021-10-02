@@ -1,14 +1,31 @@
-import { Company, ICompany } from "./../models/company.model";
-import { BadRequestException } from "./../shared/exceptions";
-import { Request, Response } from "express";
 import { get } from "lodash";
+import { Op } from "../../database";
+import { Request, Response } from "express";
+import { Company, ICompany } from "./../models/company.model";
 
 class CompanyController {
   async find(request: Request, response: Response): Promise<Response> {
     const query: any = request.query;
+    const where: any = {};
+
+    if (query && query.id) {
+      where.id = query.id;
+    }
+
+    if (query && query.cpfCnpj) {
+      where.cpfCnpj = { [Op.iLike]: `%${query.cpfCnpj}%` };
+    }
+
+    if (query && query.razaoSocial) {
+      where.razaoSocial = { [Op.iLike]: `%${query.razaoSocial}%` };
+    }
+
+    if (query && query.nomeFantasia) {
+      where.nomeFantasia = { [Op.iLike]: `%${query.nomeFantasia}%` };
+    }
 
     try {
-      const company = await Company.findAll();
+      const company = await Company.findAll({ where, limit: 30, offset: 0 });
       return response.json(company);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -39,7 +56,7 @@ class CompanyController {
   }
 
   async delete(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, "params.id", null);
 
     try {
       const company = await Company.findOne({ where: { id: id } });

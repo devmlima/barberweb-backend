@@ -36,7 +36,7 @@ export class City extends BaseModel<City> implements ICity {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
-    field: "estadoId",
+    field: "estado_id",
     comment: "Identificador da empresa",
   })
   @ForeignKey(() => State)

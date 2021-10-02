@@ -2,18 +2,30 @@ import { IService, Service } from "./../models/service.model";
 import { Response } from "express";
 import { Request } from "express";
 import { get } from "lodash";
+import { Op } from "../../database";
 
 class ServiceController {
   async find(request: Request, response: Response): Promise<Response> {
     const query: any = request.query;
+    const userLogged: any = request.headers.userLogged;
+    const where: any = {};
+
+    where.empresaId = userLogged.empresaId;
+
+    if (query && query.id) {
+      where.id = query.id;
+    }
+
+    if (query && query.descricao) {
+      where.descricao = { [Op.iLike]: `%${query.descricao}%` };
+    }
 
     try {
-      const company = await Service.findAll({
-        where: {
-          // empresaId: request.userLogged.empresaId
-        },
+      const service = await Service.findAll({
+        where,
+        limit: 30,
       } as any);
-      return response.json(company);
+      return response.json(service);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
     }
@@ -33,10 +45,10 @@ class ServiceController {
   async update(request: Request, response: Response): Promise<Response> {
     const body: IService = request.body;
     const userLogged: any = request.headers.userLogged;
-    
+
     try {
       await Service.update(body, {
-        where: { id: body.id } as any,
+        where: { id: body.id, empresaId: userLogged.empresaId } as any,
       });
       return response.json(true);
     } catch (e) {

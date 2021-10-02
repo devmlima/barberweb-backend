@@ -367,6 +367,24 @@
                         "in": "query",
                         "description": "Id da empresa para busca",
                         "required": false
+                    },
+                    {
+                        "name":"cpfCnpj",
+                        "in": "query",
+                        "description": "CPF e CNPJ da empresa",
+                        "required": false
+                    },
+                    {
+                        "name":"razaoSocial",
+                        "in": "query",
+                        "description": "Razão Social da empresa",
+                        "required": false
+                    },
+                    {
+                        "name":"nomeFantasia",
+                        "in": "query",
+                        "description": "Nome Fantasia da empresa",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -435,6 +453,23 @@
                         "required": true
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Company"
+                            },
+                            "examples": {
+                                "company": {
+                                    "value": {
+                                        "id": 10,
+                                        "nomeFantasia": "Barbearia Nome Fantasia"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "401": {
                         "description": "Não autorizado"
@@ -882,6 +917,12 @@
                         "in": "query",
                         "description": "Descrição da cidade para busca",
                         "required": false
+                    },
+                    {
+                        "name":"estadoId",
+                        "in": "query",
+                        "description": "Identificador do Estado. Ex: MG",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -944,12 +985,6 @@
                 "tags": ["State"],
                 "security": [{"bearerAuth": []}],
                 "parameters": [
-                    {
-                        "name":"id",
-                        "in": "query",
-                        "description": "Id do estado para busca",
-                        "required": false
-                    },
                     {
                         "name":"descricao",
                         "in": "query",
@@ -1250,6 +1285,12 @@
                         "in": "query",
                         "description": "Id do serviço para busca",
                         "required": false
+                    },
+                    {
+                        "name":"descricao",
+                        "in": "query",
+                        "description": "Descrição do serviço",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -1318,6 +1359,23 @@
                         "required": true
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Service"
+                            },
+                            "examples": {
+                                "service": {
+                                    "value": {
+                                        "id": 1,
+                                        "descricao": "Corte + Sobrancelha"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "401": {
                         "description": "Não autorizado"
