@@ -42,7 +42,7 @@ export class Client extends BaseModel<Client> implements IClient {
 
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
     field: "endereco_id",
     comment: "Identificador do endereço da empresa",
   })
@@ -58,7 +58,7 @@ export class Client extends BaseModel<Client> implements IClient {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
     field: "cpf_cnpj",
     comment: "Cpf ou Cnpj do cliente",
   })
@@ -66,7 +66,7 @@ export class Client extends BaseModel<Client> implements IClient {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
     comment: "Telefone celular do cliente",
   })
   celular: string;

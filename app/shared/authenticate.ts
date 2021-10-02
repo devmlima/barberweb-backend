@@ -1,5 +1,5 @@
-import { setUserLogged } from './tenant';
-import { User } from './../models/user.model';
+import { setUserLogged } from "./tenant";
+import { User } from "./../models/user.model";
 import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { get } from "lodash";
@@ -11,7 +11,7 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
     .trim();
   const decoded = jwt.decode(token, { complete: true });
   const user = new User();
-  
+
   if (!token) return res.status(401).send("Usuário não autenticado!");
   let userModel: User = null;
   if (decoded) {
@@ -25,13 +25,13 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
   } catch (e: any) {
     switch (e.name) {
       case "TokenExpiredError":
-        throw new UnauthorizedException("Token expirado!");
+        return res.status(401).send("Token expirado!");
       case "JsonWebTokenError":
-        throw new UnauthorizedException("Token mal formado!");
+        return res.status(401).send("Token mal formado!");
       case "NotBeforeError":
-        throw new UnauthorizedException("Token ainda não pode ser utilizado!");
+        return res.status(401).send("Token ainda não pode ser utilizado!");
       default:
-        throw new UnauthorizedException("Token inválido!");
+        return res.status(401).send("Token inválido!");
     }
   }
 

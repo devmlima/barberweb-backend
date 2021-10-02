@@ -1,3 +1,4 @@
+import { Schedule } from './app/models/schedule.model';
 import { State } from './app/models/state.model';
 import { Profile } from './app/models/profile.model';
 import { Client } from './app/models/client.model';
@@ -77,6 +78,7 @@ sequelize.addModels([
   Profile,
   State,
   Service,
+  Schedule
 ])
 
 export const sequelizeAuthenticate = async () => {
