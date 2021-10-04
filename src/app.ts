@@ -13,6 +13,7 @@ import swaggerDocs from "./swagger.json";
 import ServiceRoute from "./app/routes/service.route";
 import ScheduleRoute from "./app/routes/schedule.route";
 
+
 export class App {
   private express: express.Application;
   private port = (process.env.PORT || 3000);

@@ -1,4 +1,4 @@
-import { City, ICity } from "./../models/city.model";
+import { City, ICity } from "../models/city.model";
 import { Request, Response } from "express";
 import { get } from "lodash";
 import { Op } from "../../database";

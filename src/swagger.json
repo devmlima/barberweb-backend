@@ -1,0 +1,1476 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Barber Web",
+    "description": "Esta API tem como objetivo a manipulção de todo o sistema, persistir no banco de dados e fornecer informações importantes para o usuário final",
+    "contact": {
+      "email": "devmlima@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/",
+      "description": "API de desenvolvimento"
+    },
+    {
+      "url": "https://www.adefinir/",
+      "description": "API de produção"
+    }
+  ],
+  "paths": {
+    "/users/login": {
+      "post": {
+        "sumary": "Acessa o sistema",
+        "description": "Essa rota será responsável por permitir o usuário acessar o sistema",
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "company": {
+                  "value": {
+                    "email": "devmlima@gmail.com",
+                    "senha": "12345678"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Usuário já cadastrado"
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/signUp": {
+      "post": {
+        "sumary": "Cadastra um novo usuário",
+        "description": "Essa rota será responsável por cadastrar um novo usuário no sistema",
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "company": {
+                  "value": {
+                    "nome": "Matheus",
+                    "email": "devmlima@gmail.com",
+                    "celular": "31973491438",
+                    "senha": "12345678",
+                    "dataNascimento": "27/09/1999",
+                    "empresa": {
+                      "cpfCnpj": "16680422000195",
+                      "razaoSocial": "Barbearia WEB"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Usuário já cadastrado"
+          },
+          "200": {
+            "description": "Cadastro realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/find": {
+      "get": {
+        "description": "Busca todos os usuários cadastrados",
+        "sumary": "Busca todos os usuários cadastrados",
+        "tags": ["User"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Id do usuário para busca",
+            "required": false
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/findById/{id}": {
+      "get": {
+        "description": "Busca todos os usuários cadastrados por id",
+        "sumary": "Busca todos os usuários cadastrados por id",
+        "tags": ["User"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário para busca",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/update": {
+      "put": {
+        "description": "Atualiza os dados do usuário cadastrado",
+        "sumary": "Atualiza os dados do usuário cadastrado",
+        "tags": ["User"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "objeto",
+            "in": "path",
+            "description": "Objeto que contêm os conteúdos para atualização, é obrigatório enviar o id dentro do objeto.",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "id": 6,
+                    "nome": "Matheus Lima"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "Registro atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/delete/{id}": {
+      "delete": {
+        "description": "Apaga o usuário passado por id",
+        "sumary": "Apaga o usuário passado por id",
+        "tags": ["User"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário para busca e deleção",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Usuário não encontrado"
+          },
+          "200": {
+            "description": "Registro excluído com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/create": {
+      "post": {
+        "sumary": "Cadastra um novo usuário em uma empresa já registrada no sistema",
+        "description": "Essa rota será responsável por cadastrar um novo usuário em uma empresa já registrada no sistema",
+        "tags": ["User"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "company": {
+                  "value": {
+                    "nome": "Adel",
+                    "cpf": "78390646061",
+                    "email": "adel@gmail.com",
+                    "celular": "31973491438",
+                    "senha": "12345678",
+                    "dataNascimento": "27/09/1999"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Usuário já cadastrado"
+          },
+          "200": {
+            "description": "Cadastro realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/company/create": {
+      "post": {
+        "sumary": "Cadastra uma nova empresa",
+        "description": "Essa rota será responsável por cadastrar uma nova empresa no sistema",
+        "tags": ["Company"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Company"
+              },
+              "examples": {
+                "company": {
+                  "value": {
+                    "cpfCnpj": "55006020000161",
+                    "enderecoId": 1,
+                    "razaoSocial": "Empresa Barbearia",
+                    "nomeFantasia": "Barbearia",
+                    "telefone": "31973491438"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Empresa já cadastrada"
+          },
+          "200": {
+            "description": "Cadastro realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/company/find": {
+      "get": {
+        "description": "Busca todas as empresas cadastradas",
+        "sumary": "Busca todas as empresas cadastradas",
+        "tags": ["Company"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Id da empresa para busca",
+            "required": false
+          },
+          {
+            "name": "cpfCnpj",
+            "in": "query",
+            "description": "CPF e CNPJ da empresa",
+            "required": false
+          },
+          {
+            "name": "razaoSocial",
+            "in": "query",
+            "description": "Razão Social da empresa",
+            "required": false
+          },
+          {
+            "name": "nomeFantasia",
+            "in": "query",
+            "description": "Nome Fantasia da empresa",
+            "required": false
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/Company"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/company/findById/{id}": {
+      "get": {
+        "description": "Busca todas as empresas cadastradas por id",
+        "sumary": "Busca todas as empresas cadastradas por id",
+        "tags": ["Company"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id da empresa para busca",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/company/update": {
+      "put": {
+        "description": "Atualiza os dados da empresa cadastrada",
+        "sumary": "Atualiza os dados da empresa cadastrada",
+        "tags": ["Company"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "objeto",
+            "in": "path",
+            "description": "Objeto que contêm os conteúdos para atualização, é obrigatório enviar o id dentro do objeto.",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Company"
+              },
+              "examples": {
+                "company": {
+                  "value": {
+                    "id": 10,
+                    "nomeFantasia": "Barbearia Nome Fantasia"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "Registro atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/company/delete/{id}": {
+      "delete": {
+        "description": "Apaga a empresa passada por id",
+        "sumary": "Apaga a empresa passada por id",
+        "tags": ["Company"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id da empresa para busca e deleção",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Empresa não encontrada"
+          },
+          "200": {
+            "description": "Registro excluído com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/client/create": {
+      "post": {
+        "sumary": "Cadastra um novo cliente",
+        "description": "Essa rota será responsável por cadastrar um novo cliente no sistema",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Client"
+              },
+              "examples": {
+                "client": {
+                  "value": {
+                    "cpfCnpj": "39931659009",
+                    "nome": "Matheus Cliente",
+                    "celular": "31973491438"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Cliente já cadastrada"
+          },
+          "200": {
+            "description": "Cadastro realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/find": {
+      "get": {
+        "description": "Busca todos os clientes cadastrados",
+        "sumary": "Busca todos os clientes cadastrados",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Id do cliente para busca",
+            "required": false
+          },
+          {
+            "name": "nome",
+            "in": "query",
+            "description": "Nome do cliente para busca",
+            "required": false
+          },
+          {
+            "name": "cpfCnpj",
+            "in": "query",
+            "description": "CPF ou CNPJ do cliente para busca",
+            "required": false
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/Client"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/findById/{id}": {
+      "get": {
+        "description": "Busca todos os clientes por id",
+        "sumary": "Busca todos os clientes por id",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do cliente para busca",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/update": {
+      "put": {
+        "description": "Atualiza os dados do cliente cadastrado",
+        "sumary": "Atualiza os dados do cliente cadastrado",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "objeto",
+            "in": "path",
+            "description": "Objeto que contêm os conteúdos para atualização, é obrigatório enviar o id dentro do objeto",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Client"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "id": 1,
+                    "nome": "Matheus Update"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "Registro atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/delete/{id}": {
+      "delete": {
+        "description": "Apaga a empresa passada por id",
+        "sumary": "Apaga a empresa passada por id",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do cliente para busca e deleção",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Cliente não encontrado"
+          },
+          "200": {
+            "description": "Registro excluído com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/city/find": {
+      "get": {
+        "description": "Busca todas as cidades cadastradas",
+        "sumary": "Busca todas as cidades cadastradas",
+        "tags": ["City"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Id da cidade para busca",
+            "required": false
+          },
+          {
+            "name": "descricao",
+            "in": "query",
+            "description": "Descrição da cidade para busca",
+            "required": false
+          },
+          {
+            "name": "estadoId",
+            "in": "query",
+            "description": "Identificador do Estado. Ex: MG",
+            "required": false
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/City"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/city/findById/{id}": {
+      "get": {
+        "description": "Busca todas as cidades por id",
+        "sumary": "Busca todas as cidades por id",
+        "tags": ["City"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id da cidade para busca",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/City"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/state/find": {
+      "get": {
+        "description": "Busca todos os estados cadastrados",
+        "sumary": "Busca todos os estados cadastrados",
+        "tags": ["State"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "descricao",
+            "in": "query",
+            "description": "Descrição do estado para busca",
+            "required": false
+          },
+          {
+            "name": "sigla",
+            "in": "query",
+            "description": "Sigla do estado",
+            "required": false
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/State"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/state/findById/{id}": {
+      "get": {
+        "description": "Busca todos os estados por id",
+        "sumary": "Busca todos os estados por id",
+        "tags": ["State"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do estado para busca",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/State"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/service/create": {
+      "post": {
+        "sumary": "Cadastra um novo serviço",
+        "description": "Essa rota será responsável por cadastrar um novo serviço no sistema",
+        "tags": ["Service"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service"
+              },
+              "examples": {
+                "service": {
+                  "value": {
+                    "descricao": "Corte e Barba"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Empresa já cadastrada"
+          },
+          "200": {
+            "description": "Cadastro realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/find": {
+      "get": {
+        "description": "Busca todos os serviços cadastrados",
+        "sumary": "Busca todos os serviços cadastrados",
+        "tags": ["Service"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Id do serviço para busca",
+            "required": false
+          },
+          {
+            "name": "descricao",
+            "in": "query",
+            "description": "Descrição do serviço",
+            "required": false
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/Service"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/findById/{id}": {
+      "get": {
+        "description": "Busca todos os serviços cadastrados por id",
+        "sumary": "Busca todos os serviços cadastrados por id",
+        "tags": ["Service"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do serviço para busca",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/update": {
+      "put": {
+        "description": "Atualiza os dados do serviço cadastrado",
+        "sumary": "Atualiza os dados do serviço cadastrado",
+        "tags": ["Service"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "objeto",
+            "in": "path",
+            "description": "Objeto que contêm os conteúdos para atualização, é obrigatório enviar o id dentro do objeto.",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service"
+              },
+              "examples": {
+                "service": {
+                  "value": {
+                    "id": 1,
+                    "descricao": "Corte + Sobrancelha"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "Registro atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/delete/{id}": {
+      "delete": {
+        "description": "Apaga o serviço passado por id",
+        "sumary": "Apaga o serviço passado por id",
+        "tags": ["Service"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do serviço para busca e deleção",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Seviço não encontrado"
+          },
+          "200": {
+            "description": "Registro excluído com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/schedule/create": {
+      "post": {
+        "sumary": "Cadastra um novo agendamento",
+        "description": "Essa rota será responsável por cadastrar um novo agendamento no sistema",
+        "tags": ["Schedule"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Schedule"
+              },
+              "examples": {
+                "schedule": {
+                  "value": {
+                    "servicoId": 1,
+                    "hora": "09:30",
+                    "clienteId": 1,
+                    "cancelado": false,
+                    "confirmado": false,
+                    "dataOperacao": "02/10/2021"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Empresa já cadastrada"
+          },
+          "200": {
+            "description": "Cadastro realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule/find": {
+      "get": {
+        "description": "Busca todos os agendamentos cadastrados",
+        "sumary": "Busca todos os agendamentos cadastrados",
+        "tags": ["Schedule"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Id do agendamento para busca",
+            "required": false
+          },
+          {
+            "name": "servicoId",
+            "in": "query",
+            "description": "Id do serviço",
+            "required": false
+          },
+          {
+            "name": "clienteId",
+            "in": "query",
+            "description": "Id do cliente",
+            "required": false
+          },
+          {
+            "name": "usuarioId",
+            "in": "query",
+            "description": "Id do usuário responsável pelo agendamento",
+            "required": false
+          },
+          {
+            "name": "cancelado",
+            "in": "query",
+            "description": "Status do agendamento",
+            "required": false
+          },
+          {
+            "name": "confirmado",
+            "in": "query",
+            "description": "Status responsável em informar se o agendamento já foi realizado",
+            "required": false
+          },
+          {
+            "name": "dataOperacao",
+            "in": "query",
+            "description": "Data de operação. Ex: 02/10/2021",
+            "required": false
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule/findById/{id}": {
+      "get": {
+        "description": "Busca todos os agendamentos cadastrados por id",
+        "sumary": "Busca todos os agendamentos cadastrados por id",
+        "tags": ["Schedule"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do agendamento para busca",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule/update": {
+      "put": {
+        "description": "Atualiza os dados do agendamento cadastrado",
+        "sumary": "Atualiza os dados do agendamento cadastrado",
+        "tags": ["Schedule"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "objeto",
+            "in": "path",
+            "description": "Objeto que contêm os conteúdos para atualização, é obrigatório enviar o id dentro do objeto.",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Schedule"
+              },
+              "examples": {
+                "schedule": {
+                  "value": {
+                    "id": 1,
+                    "servicoId": 1,
+                    "hora": "10:00"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "200": {
+            "description": "Registro atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule/delete/{id}": {
+      "delete": {
+        "description": "Apaga o agendamento passado por id",
+        "sumary": "Apaga o agendamento passado por id",
+        "tags": ["Schedule"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do agendamento para busca e deleção",
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Não autorizado"
+          },
+          "400": {
+            "description": "Seviço não encontrado"
+          },
+          "200": {
+            "description": "Registro excluído com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+  },
+  "components": {
+    "schemas": {
+      "Company": {
+        "type": "object",
+        "properties": {
+          "cpfCnpj": {
+            "type": "string"
+          },
+          "enderecoId": {
+            "type": "number"
+          },
+          "razaoSocial": {
+            "type": "string"
+          },
+          "nomeFantasia": {
+            "type": "string"
+          },
+          "telefone": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "Client": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "empresaId": {
+            "type": "number"
+          },
+          "enderecoId": {
+            "type": "number"
+          },
+          "cpfCnpj": {
+            "type": "string"
+          },
+          "celular": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "City": {
+        "type": "object",
+        "properties": {
+          "descricao": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "State": {
+        "type": "object",
+        "properties": {
+          "sigla": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "expiresIn": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "dataNascimento": {
+            "type": "string"
+          },
+          "celular": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "cpf": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "empresaId": {
+            "type": "number"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "Service": {
+        "type": "object",
+        "properties": {
+          "descricao": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "servicoId": {
+            "type": "number"
+          },
+          "empresaId": {
+            "type": "number"
+          },
+          "hora": {
+            "type": "string"
+          },
+          "clienteId": {
+            "type": "number"
+          },
+          "usuarioId": {
+            "type": "number"
+          },
+          "cancelado": {
+            "type": "boolean"
+          },
+          "confirmado": {
+            "type": "boolean"
+          },
+          "dataOperacao": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

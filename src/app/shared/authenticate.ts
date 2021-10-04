@@ -1,5 +1,5 @@
 import { setUserLogged } from "./tenant";
-import { User } from "./../models/user.model";
+import { User } from "../models/user.model";
 import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { get } from "lodash";

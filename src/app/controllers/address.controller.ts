@@ -1,4 +1,4 @@
-import { Address, IAddress } from './../models/address.model';
+import { Address, IAddress } from '../models/address.model';
 import { BadRequestException } from "../shared/exceptions";
 import { Request, Response } from "express";
 import { get } from 'lodash';

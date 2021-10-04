@@ -1,4 +1,4 @@
-import { authMiddleware } from './../shared/authenticate';
+import { authMiddleware } from '../shared/authenticate';
 import { Router } from "express";
 import userController from "../controllers/user.controller";
 

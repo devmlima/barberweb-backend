@@ -1,6 +1,6 @@
-import { Company } from "./../models/company.model";
-import { BadRequestException } from "./../shared/exceptions";
-import { IUser, User } from "./../models/user.model";
+import { Company } from "../models/company.model";
+import { BadRequestException } from "../shared/exceptions";
+import { IUser, User } from "../models/user.model";
 import { Request, Response } from "express";
 import { Op } from "../../database";
 import { get } from "lodash";
