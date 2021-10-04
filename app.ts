@@ -15,7 +15,7 @@ import ScheduleRoute from "./app/routes/schedule.route";
 
 export class App {
   private express: express.Application;
-  private port = 3000;
+  private port = (process.env.PORT || 3000);
 
   constructor() {
     this.express = express();
