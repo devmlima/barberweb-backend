@@ -4,6 +4,9 @@
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+    "engines": {
+    "node": "12.14.1"
+  },
   "scripts": {
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "start": "nodemon index.ts",
