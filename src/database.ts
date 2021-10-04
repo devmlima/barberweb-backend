@@ -11,7 +11,9 @@ import { Op as OpSequelize } from "sequelize";
 import * as dotenv from "dotenv";
 import { Service } from './app/models/service.model';
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 const operatorsAliases = {
   $eq: OpSequelize.eq,
