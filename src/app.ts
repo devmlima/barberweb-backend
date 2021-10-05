@@ -42,8 +42,8 @@ export class App {
   }
 
   private async database() {
-    await sequelizeAuthenticate();
-    console.log("Banco conectado com sucesso!");
+    // await sequelizeAuthenticate();
+    // console.log("Banco conectado com sucesso!");
   }
 
   private routes() {
