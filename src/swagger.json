@@ -10,12 +10,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/",
-      "description": "API de desenvolvimento"
-    },
-    {
       "url": "https://barberweb.herokuapp.com/",
       "description": "API de produção"
+    },
+    {
+      "url": "http://localhost:3000/",
+      "description": "API de desenvolvimento"
     }
   ],
   "paths": {
