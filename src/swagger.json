@@ -31,7 +31,7 @@
                 "$ref": "#/components/schemas/User"
               },
               "examples": {
-                "company": {
+                "users": {
                   "value": {
                     "email": "devmlima@gmail.com",
                     "senha": "12345678"
@@ -66,7 +66,7 @@
                 "$ref": "#/components/schemas/User"
               },
               "examples": {
-                "company": {
+                "users": {
                   "value": {
                     "nome": "Matheus",
                     "email": "devmlima@gmail.com",
@@ -267,7 +267,7 @@
                 "$ref": "#/components/schemas/User"
               },
               "examples": {
-                "company": {
+                "users": {
                   "value": {
                     "nome": "Adel",
                     "cpf": "78390646061",
