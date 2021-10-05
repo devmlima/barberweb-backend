@@ -80,11 +80,11 @@ var operatorsAliases = {
   $col: _sequelize.Op.col
 };
 var sequelize = new _sequelizeTypescript.Sequelize({
-  host: process.env.HOST,
-  database: process.env.DATABASE,
+  host: 'barberiaweb.cvjbmiv4gauk.us-east-1.rds.amazonaws.com',
+  database: 'db_barbearia',
   dialect: "postgres",
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
+  username: 'devmlima',
+  password: 'm.30861383',
   operatorsAliases,
   pool: {
     max: 1,
