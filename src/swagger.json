@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "API Barber Web",
-    "description": "Esta API tem como objetivo a manipulção de todo o sistema, persistir no banco de dados e fornecer informações importantes para o usuário final",
+    "description": "Esta API tem como objetivo a manipulação de todo o sistema, persistir no banco de dados e fornecer informações importantes para o usuário final",
     "contact": {
       "email": "devmlima@gmail.com"
     },
