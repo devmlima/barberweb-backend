@@ -1,5 +1,4 @@
 import { Company } from "../models/company.model";
-import { BadRequestException } from "../shared/exceptions";
 import { IUser, User } from "../models/user.model";
 import { Request, Response } from "express";
 import { Op } from "../../database";
@@ -90,7 +89,8 @@ class UserController {
   async login(request: Request, response: Response): Promise<Response> {
     const body: IUser = request.body;
 
-    if (!body) return response.status(400).json("Dados de usuário não informado!");
+    if (!body)
+      return response.status(400).json("Dados de usuário não informado!");
     if (!body.email) return response.status(400).json("Email não informado!");
     if (!body.senha) response.status(400).json("Senha não informada!");
 
@@ -162,6 +162,30 @@ class UserController {
     console.log("Implementar...");
 
     return response.status(500).json("Rota não implementada");
+  }
+
+  async verifyToken(request: Request, response: Response): Promise<Response> {
+    try {
+      const user: any = request.headers.userLogged;
+      const token = get(request, "headers.authorization", "")
+        .replace("Bearer", "")
+        .trim();
+
+      const userModel = await User.findOne({ where: { id: user.id } });
+      const valid = userModel.validateToken(token, userModel.secret);
+
+      if (valid) return response.status(200).json(valid);
+      else
+        return response
+          .status(401)
+          .json("Sessão expirada, faça login novamente!");
+    } catch (e) {
+      return response
+        .status(501)
+        .json(
+          "Erro ao validar token, entre em contato com o administrador do sistema"
+        );
+    }
   }
 }
 

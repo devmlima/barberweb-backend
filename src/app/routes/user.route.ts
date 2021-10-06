@@ -11,6 +11,7 @@ UserRoute.delete('/delete/:id', authMiddleware, userController.delete);
 UserRoute.post('/create', userController.create);
 UserRoute.post('/signUp', userController.signUp);
 UserRoute.post('/login', userController.login);
+UserRoute.get('/verifyToken', authMiddleware, userController.verifyToken);
 
 UserRoute.get('/dataUser/', authMiddleware, userController.findById);
 
