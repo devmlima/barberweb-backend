@@ -22,6 +22,8 @@ export interface IUser {
   celular: string;
   senha: string;
   secret: string;
+  image: string;
+  provider: string;
   dataNascimento: string;
   dataInclusao?: Date;
   dataAlteracao?: Date;
@@ -87,6 +89,18 @@ export class User extends BaseModel<User> implements IUser {
     allowNull: true,
   })
   secret: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  provider: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  image: string;
 
   @Column({
     type: DataType.STRING,

@@ -3,6 +3,7 @@ import { IUser, User } from "../models/user.model";
 import { Request, Response } from "express";
 import { Op } from "../../database";
 import { get } from "lodash";
+import { v4 as uuidv4 } from 'uuid';
 
 class UserController {
   async find(request: Request, response: Response): Promise<Response> {
@@ -125,7 +126,7 @@ class UserController {
       }
 
       instanceCompany = await Company.create(company as any);
-
+      
       const params: any = {
         nome: body.nome,
         cpf: body.cpf,
@@ -134,7 +135,13 @@ class UserController {
         senha: body.senha,
         dataNascimento: body.dataNascimento,
         empresaId: instanceCompany.id,
+        image: body.image,
+        provider: body.provider,
       };
+
+      if (params.provider) {
+        params.senha = uuidv4();
+      }
 
       let instance = await User.findOne({
         where: { email: { [Op.iLike]: body.email } } as any,
