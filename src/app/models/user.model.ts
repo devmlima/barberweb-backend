@@ -99,6 +99,8 @@ export class User extends BaseModel<User> implements IUser {
   @Column({
     type: DataType.STRING,
     allowNull: true,
+    defaultValue:
+      "https://barberweb.s3.amazonaws.com/images/img-padrao.jpeg",
   })
   image: string;
 
@@ -168,9 +170,13 @@ export class User extends BaseModel<User> implements IUser {
   }
 
   public generateToken(isApi: boolean = false) {
-    let token = jwt.sign({ sub: this.id }, process.env.JWT_SECRET + this.secret, {
-      expiresIn: "1h",
-    });
+    let token = jwt.sign(
+      { sub: this.id },
+      process.env.JWT_SECRET + this.secret,
+      {
+        expiresIn: "1h",
+      }
+    );
     const decoded = jwt.decode(token, { complete: true });
     const expiresIn = String(
       moment.unix(decoded.payload.exp).toDate().getSeconds()
@@ -183,9 +189,13 @@ export class User extends BaseModel<User> implements IUser {
   }
 
   public generateTokenResetSenha() {
-    return jwt.sign({ usr: this.id, res: true }, process.env.JWT_SECRET + this.secret, {
-      expiresIn: "1h",
-    });
+    return jwt.sign(
+      { usr: this.id, res: true },
+      process.env.JWT_SECRET + this.secret,
+      {
+        expiresIn: "1h",
+      }
+    );
   }
 
   public validateToken(token: string, secret): boolean {

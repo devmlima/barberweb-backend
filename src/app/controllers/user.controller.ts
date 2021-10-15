@@ -93,12 +93,12 @@ class UserController {
     if (!body)
       return response.status(400).json("Dados de usuário não informado!");
     if (!body.email) return response.status(400).json("Email não informado!");
-    if (!body.senha) response.status(400).json("Senha não informada!");
+    if (!body.senha && !body.provider) response.status(400).json("Senha não informada!");
 
     const user = await User.findOne({ where: { email: body.email } as any });
     if (!user) response.status(400).json("Usuário não encontrado!");
 
-    if (!user.compareSenha(body.senha)) {
+    if (!body.provider && !user.compareSenha(body.senha)) {
       response.status(400).json("Senha inválida");
     }
 
