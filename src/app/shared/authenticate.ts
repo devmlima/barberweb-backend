@@ -36,6 +36,7 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
   }
 
   req.headers.userLogged = userModel;
+  req.headers.companyId = userModel.empresaId;
   setUserLogged(userModel);
   next();
   // PASSAR FUNÇÃO DE VERIFICAÇÃO DE PERMISSÕES DE ACESSO AQUI

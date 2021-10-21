@@ -3,14 +3,17 @@ import { IUser, User } from "../models/user.model";
 import { Request, Response } from "express";
 import { Op } from "../../database";
 import { get } from "lodash";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 class UserController {
   async find(request: Request, response: Response): Promise<Response> {
     const query: any = request.query;
+    const userLogged: any = request.headers.userLogged;
 
     try {
-      const user = await User.findAll();
+      const user = await User.findAll({
+        where: { empresaId: userLogged.empresaId },
+      } as any);
       return response.status(200).json(user);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -22,6 +25,9 @@ class UserController {
 
     try {
       const user = await User.findOne({ where: { id: id } as any });
+      delete user.senha;
+      delete user.secret;
+      
       return response.json(user);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -53,6 +59,7 @@ class UserController {
 
   async create(request: Request, response: Response): Promise<Response> {
     const body = request.body;
+    const companyId: any = request.headers.companyId;
 
     try {
       const params: any = {
@@ -62,7 +69,7 @@ class UserController {
         celular: body.celular,
         senha: body.senha,
         dataNascimento: body.dataNascimento,
-        empresaId: body.empresaId,
+        empresaId: companyId,
       };
 
       let instance = await User.findOne({
@@ -93,7 +100,8 @@ class UserController {
     if (!body)
       return response.status(400).json("Dados de usuário não informado!");
     if (!body.email) return response.status(400).json("Email não informado!");
-    if (!body.senha && !body.provider) response.status(400).json("Senha não informada!");
+    if (!body.senha && !body.provider)
+      response.status(400).json("Senha não informada!");
 
     const user = await User.findOne({ where: { email: body.email } as any });
     if (!user) response.status(400).json("Usuário não encontrado!");
@@ -126,7 +134,7 @@ class UserController {
       }
 
       instanceCompany = await Company.create(company as any);
-      
+
       const params: any = {
         nome: body.nome,
         cpf: body.cpf,
