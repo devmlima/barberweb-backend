@@ -1,3 +1,4 @@
+import { Profile } from './profile.model';
 import { Company } from "./company.model";
 import { HttpException } from "../shared/exceptions";
 import * as crypto from "crypto";
@@ -110,6 +111,15 @@ export class User extends BaseModel<User> implements IUser {
     field: "data_nascimento",
   })
   dataNascimento: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    field: "perfil_id",
+    comment: "Identificador do usuário",
+  })
+  @ForeignKey(() => Profile)
+  perfilId: number;
 
   @Column({
     type: DataType.DATE,

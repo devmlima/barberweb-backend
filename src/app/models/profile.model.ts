@@ -7,7 +7,6 @@ export interface IProfile {
   id: number;
   permissoes: string;
   empresaId: number;
-  usuarioId: number;
   dataInclusao?: Date;
   dataAlteracao?: Date;
 }
@@ -39,20 +38,17 @@ export class Profile extends BaseModel<Profile> implements IProfile {
   empresaId: number;
 
   @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    field: "usuario_id",
-    comment: "Identificador do usuário",
-  })
-  @ForeignKey(() => User)
-  usuarioId: number;
-
-  @Column({
     type: DataType.JSONB,
-    allowNull: false,
+    allowNull: true,
     comment: "Permissões do usuário",
   })
   permissoes: any;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  descricao: string;
 
   @Column({
     type: DataType.DATE,
