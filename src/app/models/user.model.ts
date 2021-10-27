@@ -25,7 +25,6 @@ export interface IUser {
   secret: string;
   image: string;
   provider: string;
-  dataNascimento: string;
   dataInclusao?: Date;
   dataAlteracao?: Date;
 }
@@ -106,13 +105,6 @@ export class User extends BaseModel<User> implements IUser {
   image: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
-    field: "data_nascimento",
-  })
-  dataNascimento: string;
-
-  @Column({
     type: DataType.INTEGER,
     allowNull: false,
     field: "perfil_id",
@@ -162,7 +154,6 @@ export class User extends BaseModel<User> implements IUser {
   json() {
     let user: IUser | any = this.toJSON();
     delete user.senha;
-    delete user.id;
     delete user.secret;
 
     return user;

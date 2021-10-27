@@ -27,7 +27,7 @@ class UserController {
       const user = await User.findOne({ where: { id: id } as any });
       delete user.senha;
       delete user.secret;
-      
+
       return response.json(user);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -174,9 +174,22 @@ class UserController {
   }
 
   async dataUser(request: Request, response: Response): Promise<Response> {
-    console.log("Implementar...");
+    const query: any = request.query;
+    const userLogged: any = request.headers.userLogged;
 
-    return response.status(500).json("Rota não implementada");
+    try {
+      const user = await User.findOne({
+        where: { empresaId: userLogged.empresaId, id: userLogged.id },
+      } as any);
+
+      const instance = user.json();
+      const { token } = user.generateToken();
+
+      const result = { ...instance, token };
+      return response.status(200).json(result);
+    } catch (e) {
+      return response.status(401).send("Erro ao pesquisar registro");
+    }
   }
 
   async verifyToken(request: Request, response: Response): Promise<Response> {

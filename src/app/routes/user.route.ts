@@ -13,6 +13,6 @@ UserRoute.post('/signUp', userController.signUp);
 UserRoute.post('/login', userController.login);
 UserRoute.get('/verifyToken', authMiddleware, userController.verifyToken);
 
-UserRoute.get('/dataUser/', authMiddleware, userController.findById);
+UserRoute.get('/dataUser/', authMiddleware, userController.dataUser);
 
 export default UserRoute;

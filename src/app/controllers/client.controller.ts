@@ -1,7 +1,7 @@
-import { Client, IClient } from '../models/client.model';
+import { Client, IClient } from "../models/client.model";
 import { Request, Response } from "express";
-import { get } from 'lodash';
-import { Op } from '../../database';
+import { get } from "lodash";
+import { Op } from "../../database";
 
 class ClientController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -23,9 +23,8 @@ class ClientController {
       where.cpfCnpj = { [Op.iLike]: `%${query.cpfCnpj}%` };
     }
 
-
     try {
-      const client = await Client.findAll({where, limit: 30, offset: 0});
+      const client = await Client.findAll({ where, limit: 30, offset: 0 });
       return response.status(200).json(client);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -33,8 +32,8 @@ class ClientController {
   }
 
   async findById(request: Request, response: Response): Promise<Response> {
-    const id = get(request, 'params.id', null);
-    
+    const id = get(request, "params.id", null);
+
     try {
       const client = await Client.findOne({ where: { id } as any });
       return response.status(200).json(client);
@@ -71,9 +70,21 @@ class ClientController {
   async create(request: Request, response: Response): Promise<Response> {
     const body = request.body;
     const userLogged: any = request.headers.userLogged;
-    body.empresaId = userLogged.empresaId;
+    const companyId: any = request.headers.companyId;
+    body.empresaId = companyId;
 
     try {
+      let instanceClient = await Client.findOne({
+        where: { empresaId: companyId, nome: { [Op.iLike]: body.nome } } as any,
+      });
+
+      if (instanceClient) {
+        response
+          .status(401)
+          .json("Já existe um cliente cadastrado com o nome cadastrado!");
+        return;
+      }
+
       const instance = await Client.create(body as any);
       return response.status(200).json(instance);
     } catch (e) {
