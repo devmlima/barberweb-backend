@@ -81,7 +81,7 @@ class ProfileController {
       const instance = await Profile.create(object as any);
       return response.status(200).json(instance);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return response.status(500).send("Erro ao criar registro");
     }
   }
