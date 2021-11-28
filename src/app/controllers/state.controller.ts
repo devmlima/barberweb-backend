@@ -5,9 +5,9 @@ import { Op } from "../../database";
 
 class StateController {
   async findAll(request: Request, response: Response): Promise<Response> {
-    const query: any = request.query;
+    const query: any = JSON.parse(get(request, "query.filter", ""));
 
-    const where: any = {};
+    const { where, limit }: any = query;
 
     if (query && query.descricao) {
       where.descricao = { [Op.iLike]: `%${query.descricao}%` };
@@ -18,7 +18,7 @@ class StateController {
     }
 
     try {
-      const state = await State.findAll({ where, limit: 30, offset: 0 });
+      const state = await State.findAll({ where, limit, offset: 0 });
       return response.status(200).json(state);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");

@@ -9,6 +9,7 @@ export interface IAddress {
   rua: string;
   numero: number;
   cep: string;
+  bairro: string;
   estadoId: string;
   cidadeId: number;
   dataInclusao?: Date;
@@ -48,6 +49,14 @@ export class Address extends BaseModel<Address> implements IAddress {
     comment: "Nome da Rua",
   })
   rua: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: "bairro",
+    comment: "Nome do bairro",
+  })
+  bairro: string;
 
   @Column({
     type: DataType.NUMBER,

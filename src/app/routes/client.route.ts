@@ -4,6 +4,7 @@ import clientController from "../controllers/client.controller";
 
 const ClientRoute = Router();
 
+ClientRoute.get('/searchCep', authMiddleware, clientController.searchCep);
 ClientRoute.get('/find', authMiddleware, clientController.findAll);
 ClientRoute.get('/findById/:id', authMiddleware, clientController.findById);
 ClientRoute.put('/update', authMiddleware, clientController.update);

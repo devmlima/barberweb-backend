@@ -21,7 +21,7 @@ class CityController {
     }
 
     try {
-      const city = await City.findAll({ where, limit, offset: 0 });
+      const city = await City.findAll({ where, limit, offset: 0, order: query.order });
       return response.status(200).json(city);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
