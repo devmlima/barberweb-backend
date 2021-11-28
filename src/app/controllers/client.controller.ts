@@ -64,7 +64,11 @@ class ClientController {
     const id = get(request, "params.id", null);
 
     try {
-      const client = await Client.findOne({ where: { id } as any });
+      const client = await Client.findOne({
+        where: { id } as any,
+        include: [{ model: Address, include: [State, City] },
+        ]
+      });
       return response.status(200).json(client);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -72,12 +76,20 @@ class ClientController {
   }
 
   async update(request: Request, response: Response): Promise<Response> {
-    const body: IClient = request.body;
+    const body = request.body;
 
     try {
+      const address = body.endereco;
+
+      await Address.update(address, {
+        where: { id: address.addressId }
+      })
+
+      delete body.addressId;
       await Client.update(body, {
         where: { id: body.id } as any,
       });
+
       return response.status(200).json(true);
     } catch (e) {
       return response.status(500).send("Erro ao atualizar registro");
@@ -98,7 +110,6 @@ class ClientController {
 
   async create(request: Request, response: Response): Promise<Response> {
     const body = request.body;
-    const userLogged: any = request.headers.userLogged;
     const companyId: any = request.headers.companyId;
     body.empresaId = companyId;
 
@@ -112,7 +123,7 @@ class ClientController {
 
       const addresInstance = await Address.create(obj as any);
       body.enderecoId = addresInstance.id;
-      
+
       if (instanceClient) {
         response
           .status(401)

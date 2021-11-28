@@ -1,6 +1,6 @@
 import { Address } from "./address.model";
 import { Company } from "./company.model";
-import { Table, Column, DataType, ForeignKey, BeforeCreate } from "sequelize-typescript";
+import { Table, Column, DataType, ForeignKey, AfterFind, BelongsTo } from "sequelize-typescript";
 import { BaseModel } from "./Base.model";
 
 export interface IClient {
@@ -48,6 +48,9 @@ export class Client extends BaseModel<Client> implements IClient {
   })
   @ForeignKey(() => Address)
   enderecoId: number;
+
+  @BelongsTo(() => Address)
+  address: Address;
 
   @Column({
     type: DataType.STRING,

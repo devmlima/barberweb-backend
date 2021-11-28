@@ -1,6 +1,7 @@
+import { City } from './city.model';
 import { State } from "./state.model";
 import { Company } from "./company.model";
-import { Table, Column, DataType, ForeignKey } from "sequelize-typescript";
+import { Table, Column, DataType, ForeignKey, BelongsTo } from "sequelize-typescript";
 import { BaseModel } from "./Base.model";
 
 export interface IAddress {
@@ -88,7 +89,7 @@ export class Address extends BaseModel<Address> implements IAddress {
     field: "cidade_id",
     comment: "Identificador da cidade",
   })
-  // @ForeignKey(() => City)
+  @ForeignKey(() => City)
   cidadeId: number;
 
   @Column({
@@ -108,4 +109,10 @@ export class Address extends BaseModel<Address> implements IAddress {
     comment: "Data de alteração do registro",
   })
   dataAlteracao?: Date;
+
+  @BelongsTo(() => City)
+  city: City;
+
+  @BelongsTo(() => State)
+  state: State;
 }
