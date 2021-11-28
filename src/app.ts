@@ -31,7 +31,7 @@ export class App {
 
   private listen(): void {
     this.express.listen(this.port, () => {
-      console.info("Aplicação iniciada na porta 3000!");
+      console.info("Aplicação iniciada na porta", this.port);
     });
   }
 

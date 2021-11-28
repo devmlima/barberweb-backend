@@ -1,6 +1,6 @@
 import { Address } from "./address.model";
 import { Company } from "./company.model";
-import { Table, Column, DataType, ForeignKey } from "sequelize-typescript";
+import { Table, Column, DataType, ForeignKey, BeforeCreate } from "sequelize-typescript";
 import { BaseModel } from "./Base.model";
 
 export interface IClient {
