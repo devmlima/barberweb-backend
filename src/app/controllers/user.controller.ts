@@ -1,16 +1,19 @@
 import { Company } from "../models/company.model";
-import { BadRequestException } from "../shared/exceptions";
 import { IUser, User } from "../models/user.model";
 import { Request, Response } from "express";
 import { Op } from "../../database";
 import { get } from "lodash";
+import { v4 as uuidv4 } from "uuid";
 
 class UserController {
   async find(request: Request, response: Response): Promise<Response> {
     const query: any = request.query;
+    const userLogged: any = request.headers.userLogged;
 
     try {
-      const user = await User.findAll();
+      const user = await User.findAll({
+        where: { empresaId: userLogged.empresaId },
+      } as any);
       return response.status(200).json(user);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -22,6 +25,9 @@ class UserController {
 
     try {
       const user = await User.findOne({ where: { id: id } as any });
+      delete user.senha;
+      delete user.secret;
+
       return response.json(user);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -53,6 +59,7 @@ class UserController {
 
   async create(request: Request, response: Response): Promise<Response> {
     const body = request.body;
+    const companyId: any = request.headers.companyId;
 
     try {
       const params: any = {
@@ -62,7 +69,7 @@ class UserController {
         celular: body.celular,
         senha: body.senha,
         dataNascimento: body.dataNascimento,
-        empresaId: body.empresaId,
+        empresaId: companyId,
       };
 
       let instance = await User.findOne({
@@ -90,14 +97,16 @@ class UserController {
   async login(request: Request, response: Response): Promise<Response> {
     const body: IUser = request.body;
 
-    if (!body) return response.status(400).json("Dados de usuário não informado!");
+    if (!body)
+      return response.status(400).json("Dados de usuário não informado!");
     if (!body.email) return response.status(400).json("Email não informado!");
-    if (!body.senha) response.status(400).json("Senha não informada!");
+    if (!body.senha && !body.provider)
+      response.status(400).json("Senha não informada!");
 
     const user = await User.findOne({ where: { email: body.email } as any });
     if (!user) response.status(400).json("Usuário não encontrado!");
 
-    if (!user.compareSenha(body.senha)) {
+    if (!body.provider && !user.compareSenha(body.senha)) {
       response.status(400).json("Senha inválida");
     }
 
@@ -134,7 +143,13 @@ class UserController {
         senha: body.senha,
         dataNascimento: body.dataNascimento,
         empresaId: instanceCompany.id,
+        image: body.image,
+        provider: body.provider,
       };
+
+      if (params.provider) {
+        params.senha = uuidv4();
+      }
 
       let instance = await User.findOne({
         where: { email: { [Op.iLike]: body.email } } as any,
@@ -159,9 +174,46 @@ class UserController {
   }
 
   async dataUser(request: Request, response: Response): Promise<Response> {
-    console.log("Implementar...");
+    const query: any = request.query;
+    const userLogged: any = request.headers.userLogged;
 
-    return response.status(500).json("Rota não implementada");
+    try {
+      const user = await User.findOne({
+        where: { empresaId: userLogged.empresaId, id: userLogged.id },
+      } as any);
+
+      const instance = user.json();
+      const { token } = user.generateToken();
+
+      const result = { ...instance, token };
+      return response.status(200).json(result);
+    } catch (e) {
+      return response.status(401).send("Erro ao pesquisar registro");
+    }
+  }
+
+  async verifyToken(request: Request, response: Response): Promise<Response> {
+    try {
+      const user: any = request.headers.userLogged;
+      const token = get(request, "headers.authorization", "")
+        .replace("Bearer", "")
+        .trim();
+
+      const userModel = await User.findOne({ where: { id: user.id } });
+      const valid = userModel.validateToken(token, userModel.secret);
+
+      if (valid) return response.status(200).json(valid);
+      else
+        return response
+          .status(401)
+          .json("Sessão expirada, faça login novamente!");
+    } catch (e) {
+      return response
+        .status(501)
+        .json(
+          "Erro ao validar token, entre em contato com o administrador do sistema"
+        );
+    }
   }
 }
 

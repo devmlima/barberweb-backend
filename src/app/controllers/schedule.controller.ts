@@ -1,7 +1,9 @@
+import { Service } from './../models/service.model';
 import { Schedule, ISchedule } from "../models/schedule.model";
 import { Request, Response } from "express";
 import { get } from "lodash";
 import { Op } from "../../database";
+import { Client } from "../models/client.model";
 
 class ScheduleController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -46,7 +48,7 @@ class ScheduleController {
     }
 
     try {
-      const schedule = await Schedule.findAll({ where, limit: 30, offset: 0 });
+      const schedule = await Schedule.findAll({ where, limit: 30, offset: 0, include: [Client, Service] });
       return response.status(200).json(schedule);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -57,7 +59,7 @@ class ScheduleController {
     const id = get(request, "params.id", null);
 
     try {
-      const schedule = await Schedule.findOne({ where: { id } as any });
+      const schedule = await Schedule.findOne({ where: { id }, include: [Client, Service] as any });
       return response.status(200).json(schedule);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");

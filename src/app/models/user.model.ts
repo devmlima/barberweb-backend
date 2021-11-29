@@ -1,3 +1,4 @@
+import { Profile } from './profile.model';
 import { Company } from "./company.model";
 import { HttpException } from "../shared/exceptions";
 import * as crypto from "crypto";
@@ -22,7 +23,8 @@ export interface IUser {
   celular: string;
   senha: string;
   secret: string;
-  dataNascimento: string;
+  image: string;
+  provider: string;
   dataInclusao?: Date;
   dataAlteracao?: Date;
 }
@@ -91,9 +93,25 @@ export class User extends BaseModel<User> implements IUser {
   @Column({
     type: DataType.STRING,
     allowNull: true,
-    field: "data_nascimento",
   })
-  dataNascimento: string;
+  provider: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    defaultValue:
+      "https://barberweb.s3.amazonaws.com/images/img-padrao.jpeg",
+  })
+  image: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    field: "perfil_id",
+    comment: "Identificador do usuário",
+  })
+  @ForeignKey(() => Profile)
+  perfilId: number;
 
   @Column({
     type: DataType.DATE,
@@ -136,7 +154,6 @@ export class User extends BaseModel<User> implements IUser {
   json() {
     let user: IUser | any = this.toJSON();
     delete user.senha;
-    delete user.id;
     delete user.secret;
 
     return user;
@@ -154,9 +171,13 @@ export class User extends BaseModel<User> implements IUser {
   }
 
   public generateToken(isApi: boolean = false) {
-    let token = jwt.sign({ sub: this.id }, process.env.JWT_SECRET + this.secret, {
-      expiresIn: "1h",
-    });
+    let token = jwt.sign(
+      { sub: this.id },
+      process.env.JWT_SECRET + this.secret,
+      {
+        expiresIn: "1h",
+      }
+    );
     const decoded = jwt.decode(token, { complete: true });
     const expiresIn = String(
       moment.unix(decoded.payload.exp).toDate().getSeconds()
@@ -169,9 +190,13 @@ export class User extends BaseModel<User> implements IUser {
   }
 
   public generateTokenResetSenha() {
-    return jwt.sign({ usr: this.id, res: true }, process.env.JWT_SECRET + this.secret, {
-      expiresIn: "1h",
-    });
+    return jwt.sign(
+      { usr: this.id, res: true },
+      process.env.JWT_SECRET + this.secret,
+      {
+        expiresIn: "1h",
+      }
+    );
   }
 
   public validateToken(token: string, secret): boolean {

@@ -13,10 +13,9 @@ import swaggerDocs from "./swagger.json";
 import ServiceRoute from "./app/routes/service.route";
 import ScheduleRoute from "./app/routes/schedule.route";
 
-
 export class App {
   private express: express.Application;
-  private port = (process.env.PORT || 3000);
+  private port = process.env.PORT || 3000;
 
   constructor() {
     this.express = express();
@@ -32,7 +31,7 @@ export class App {
 
   private listen(): void {
     this.express.listen(this.port, () => {
-      console.log("Aplicação iniciada na porta 3000!");
+      console.info("Aplicação iniciada na porta", this.port);
     });
   }
 
@@ -43,7 +42,11 @@ export class App {
 
   private async database() {
     await sequelizeAuthenticate();
-    console.log("Banco conectado com sucesso!");
+    if (process.env.NODE_ENV === "dev") {
+      console.info("Banco local conectado com sucesso!");
+    } else {
+      console.info("Banco de produção conectado com sucesso!");
+    }
   }
 
   private routes() {

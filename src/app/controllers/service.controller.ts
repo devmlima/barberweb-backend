@@ -57,7 +57,7 @@ class ServiceController {
   }
 
   async delete(request: Request, response: Response): Promise<Response> {
-    const { id } = request.query;
+    const id = get(request, "params.id", null);
 
     try {
       const service = await Service.findOne({ where: { id: id } });

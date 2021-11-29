@@ -1,7 +1,7 @@
 import { Client } from './client.model';
 import { Company } from "./company.model";
 import { User } from "./user.model";
-import { Table, Column, DataType, ForeignKey } from "sequelize-typescript";
+import { Table, Column, DataType, ForeignKey, BelongsTo } from "sequelize-typescript";
 import { BaseModel } from "./Base.model";
 import { Service } from "./service.model";
 
@@ -63,6 +63,9 @@ export class Schedule extends BaseModel<Schedule> implements ISchedule {
   @ForeignKey(() => Service)
   servicoId: number;
 
+  @BelongsTo(() => Service)
+  service: Service;
+
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -71,6 +74,9 @@ export class Schedule extends BaseModel<Schedule> implements ISchedule {
   })
   @ForeignKey(() => Client)
   clienteId: number;
+
+  @BelongsTo(() => Client)
+  client: Client;
 
   @Column({
     type: DataType.BOOLEAN,
@@ -85,7 +91,7 @@ export class Schedule extends BaseModel<Schedule> implements ISchedule {
     type: DataType.BOOLEAN,
     allowNull: true,
     field: "confirmado",
-    defaultValue: false,
+    defaultValue: true,
     comment: "Verifica se o agendamento está confirmado, ou seja, foi realizado",
   })
   confirmado: boolean;
