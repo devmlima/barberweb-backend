@@ -53,7 +53,7 @@ class ClientController {
     }
 
     try {
-      const client = await Client.findAll({ where, limit: 30, offset: 0 });
+      const client = await Client.findAll({ where, limit: 30, offset: 0, order: ['id'] });
       return response.status(200).json(client);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
