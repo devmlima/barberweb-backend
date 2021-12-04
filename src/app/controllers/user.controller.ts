@@ -1,3 +1,4 @@
+import { Profile } from './../models/profile.model';
 import { Company } from "../models/company.model";
 import { IUser, User } from "../models/user.model";
 import { Request, Response } from "express";
@@ -12,7 +13,7 @@ class UserController {
 
     try {
       const user = await User.findAll({
-        where: { empresaId: userLogged.empresaId },
+        where: { empresaId: userLogged.empresaId}, include: [Profile] 
       } as any);
       return response.status(200).json(user);
     } catch (e) {
@@ -24,7 +25,7 @@ class UserController {
     const id = get(request, "params.id", null);
 
     try {
-      const user = await User.findOne({ where: { id: id } as any });
+      const user = await User.findOne({ where: { id: id } as any, include: [Profile] },);
       delete user.senha;
       delete user.secret;
 
@@ -70,6 +71,7 @@ class UserController {
         senha: body.senha,
         dataNascimento: body.dataNascimento,
         empresaId: companyId,
+        perfilId: body.perfilId,
       };
 
       let instance = await User.findOne({

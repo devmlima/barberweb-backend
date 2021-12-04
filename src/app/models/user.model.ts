@@ -10,6 +10,7 @@ import {
   BeforeCreate,
   BeforeSave,
   ForeignKey,
+  BelongsTo,
 } from "sequelize-typescript";
 import { BaseModel } from "./Base.model";
 import * as moment from "moment";
@@ -112,6 +113,9 @@ export class User extends BaseModel<User> implements IUser {
   })
   @ForeignKey(() => Profile)
   perfilId: number;
+
+  @BelongsTo(() => Profile)
+  profile: Profile;
 
   @Column({
     type: DataType.DATE,
