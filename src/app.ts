@@ -12,6 +12,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerDocs from "./swagger.json";
 import ServiceRoute from "./app/routes/service.route";
 import ScheduleRoute from "./app/routes/schedule.route";
+import CutsMadeRoute from "./app/routes/cutsMade.route";
 
 export class App {
   private express: express.Application;
@@ -61,5 +62,6 @@ export class App {
     this.express.use("/state", StateRoute);
     this.express.use("/service", ServiceRoute);
     this.express.use("/schedule", ScheduleRoute);
+    this.express.use("/cutsMade", CutsMadeRoute);
   }
 }

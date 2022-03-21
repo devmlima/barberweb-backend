@@ -1,3 +1,4 @@
+import { CutsMade } from './../models/cutsMade.model';
 import { Service } from './../models/service.model';
 import { Schedule, ISchedule } from "../models/schedule.model";
 import { Request, Response } from "express";
@@ -48,7 +49,13 @@ class ScheduleController {
     }
 
     try {
-      const schedule = await Schedule.findAll({ where, limit: 30, offset: 0, include: [Client, Service] });
+      const schedule = await Schedule.findAll({ 
+        where, 
+        limit: 30, 
+        offset: 0, 
+        include: [Client, Service], 
+        order: [['dataAlteracao', 'desc']] 
+      });
       return response.status(200).json(schedule);
     } catch (e) {
       return response.status(500).send("Erro ao pesquisar registro");
@@ -103,6 +110,16 @@ class ScheduleController {
     } catch (e) {
       return response.status(500).send("Erro ao criar registro");
     }
+  }
+
+  async scheduleMade(request: Request, response: Response): Promise<Response> {
+    try {
+      await CutsMade.create(request.body);
+    } catch (error) {
+      throw new Error("Erro ao realizar o corte");
+    }
+
+    return;
   }
 }
 

@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { Op } from "../../database";
 import { get } from "lodash";
 import { v4 as uuidv4 } from "uuid";
+import * as crypto from "crypto";
 
 class UserController {
   async find(request: Request, response: Response): Promise<Response> {
@@ -13,7 +14,7 @@ class UserController {
 
     try {
       const user = await User.findAll({
-        where: { empresaId: userLogged.empresaId}, include: [Profile] 
+        where: { empresaId: userLogged.empresaId }, include: [Profile]
       } as any);
       return response.status(200).json(user);
     } catch (e) {
@@ -216,6 +217,27 @@ class UserController {
           "Erro ao validar token, entre em contato com o administrador do sistema"
         );
     }
+  }
+
+  async updatePassword(request: Request, response: Response): Promise<Response> {
+    const { newPassword, actualPassword } = request.body;
+    const userLogged: any = request.headers.userLogged;
+    const pass = crypto.createHmac("sha256", newPassword).digest("hex");
+    const user = await User.findOne({ where: { id: userLogged.id } });
+    try {
+      if (user.compareSenha(actualPassword)) {
+        user.senha = pass;
+        await user.save();
+        response.send();
+      } else {
+        response.json({ error: 'Senha atual inválida' }).status(400);
+      }
+
+    } catch (error) {
+      response.json({ error: 'Ocorreu um erro ao atualizar a senha' }).status(500);
+    }
+
+    return;
   }
 }
 
