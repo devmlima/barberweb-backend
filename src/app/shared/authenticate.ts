@@ -48,13 +48,20 @@ export const authPermitions = async (req: any, res: Response, next: any) => {
   const route = req.baseUrl.substring(1);
   const permitionsRoute = permitions[route];
   const method = req.method;
-  
+
   if (method.toLowerCase() !== 'get' && permitionsRoute && !permitionsRoute.writing) {
     return res.send("Você não tem permissão para efetuar alterações!");
   }
 
   if (method.toLowerCase() === 'get' && permitionsRoute && !permitionsRoute.reading) {
     return res.status(401).send("Você não tem permissão para visualizar esta rotina!");
+  }
+
+  if (permitions.client.all && permitions.profile.all && permitions.schedule.all &&
+    permitions.service.all && permitions.user.all) {
+      req.headers.admin = true;
+  } else {
+    req.headers.admin = false;
   }
 
   next();
