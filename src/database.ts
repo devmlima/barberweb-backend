@@ -1,3 +1,4 @@
+import { CutsMade } from './app/models/cutsMade.model';
 import { Schedule } from './app/models/schedule.model';
 import { State } from './app/models/state.model';
 import { Profile } from './app/models/profile.model';
@@ -80,7 +81,8 @@ sequelize.addModels([
   Profile,
   State,
   Service,
-  Schedule
+  Schedule,
+  CutsMade
 ])
 
 export const sequelizeAuthenticate = async () => {

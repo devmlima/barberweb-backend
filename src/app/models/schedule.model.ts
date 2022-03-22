@@ -14,6 +14,7 @@ export interface ISchedule {
   usuarioId: number;
   cancelado: boolean;
   confirmado: boolean;
+  valor: number;
   dataOperacao: string;
   dataInclusao?: Date;
   dataAlteracao?: Date;
@@ -104,6 +105,14 @@ export class Schedule extends BaseModel<Schedule> implements ISchedule {
     comment: "Hora do agendamento",
   })
   hora: string;
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    field: "valor",
+    comment: "Valor do serviço",
+  })
+  valor: number;
 
   @Column({
     type: DataType.STRING,

@@ -1,9 +1,9 @@
+import { Profile } from './../models/profile.model';
 import { setUserLogged } from "./tenant";
 import { User } from "../models/user.model";
-import { Request, Response } from "express";
+import { Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { get } from "lodash";
-import { UnauthorizedException } from "./exceptions";
 
 export const authMiddleware = async (req: any, res: Response, next: any) => {
   const token = get(req, "headers.authorization", "")
@@ -15,7 +15,7 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
   if (!token) return res.status(401).send("Usuário não autenticado!");
   let userModel: User = null;
   if (decoded) {
-    userModel = await User.findOne({ where: { id: decoded.payload.sub } });
+    userModel = await User.findOne({ where: { id: decoded.payload.sub }, include: [Profile] });
   }
 
   if (!userModel) return res.status(401).send("Usuário não encontrado!");
@@ -37,7 +37,32 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
 
   req.headers.userLogged = userModel;
   req.headers.companyId = userModel.empresaId;
+  req.headers.permitions = JSON.parse(userModel.profile.permissoes);
+
   setUserLogged(userModel);
   next();
-  // PASSAR FUNÇÃO DE VERIFICAÇÃO DE PERMISSÕES DE ACESSO AQUI
 };
+
+export const authPermitions = async (req: any, res: Response, next: any) => {
+  const permitions = req.headers.permitions;
+  const route = req.baseUrl.substring(1);
+  const permitionsRoute = permitions[route];
+  const method = req.method;
+
+  if (method.toLowerCase() !== 'get' && permitionsRoute && !permitionsRoute.writing) {
+    return res.send("Você não tem permissão para efetuar alterações!");
+  }
+
+  if (method.toLowerCase() === 'get' && permitionsRoute && !permitionsRoute.reading) {
+    return res.status(401).send("Você não tem permissão para visualizar esta rotina!");
+  }
+
+  if (permitions.client.all && permitions.profile.all && permitions.schedule.all &&
+    permitions.service.all && permitions.user.all) {
+      req.headers.admin = true;
+  } else {
+    req.headers.admin = false;
+  }
+
+  next();
+}
