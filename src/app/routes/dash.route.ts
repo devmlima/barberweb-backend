@@ -1,6 +1,6 @@
-import { authMiddleware, authPermitions } from '../shared/authenticate';
 import { Router } from "express";
 import dashController from '../controllers/dash.controller';
+import { authMiddleware, authPermitions } from '../shared/authenticate';
 
 const DashboardRoute = Router();
 
@@ -9,5 +9,8 @@ DashboardRoute.get('/faturamentAll', authMiddleware, authPermitions, dashControl
 DashboardRoute.get('/userMonth', authMiddleware, authPermitions, dashController.userMonth);
 DashboardRoute.get('/faturamentForUser', authMiddleware, authPermitions, dashController.faturamentForUser);
 DashboardRoute.get('/faturamentLastSevenDays', authMiddleware, authPermitions, dashController.faturamentLastSevenDays);
+DashboardRoute.get('/servicesMades', authMiddleware, authPermitions, dashController.servicesMades);
+DashboardRoute.get('/schedules', authMiddleware, authPermitions, dashController.schedules);
+DashboardRoute.get('/schedulesCanceled', authMiddleware, authPermitions, dashController.schedulesCanceled);
 
 export default DashboardRoute;
