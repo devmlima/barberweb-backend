@@ -1,19 +1,15 @@
-import { Profile } from './profile.model';
-import { Company } from "./company.model";
-import { HttpException } from "../shared/exceptions";
 import * as crypto from "crypto";
 import * as jwt from "jsonwebtoken";
-import {
-  Table,
-  Column,
-  DataType,
-  BeforeCreate,
-  BeforeSave,
-  ForeignKey,
-  BelongsTo,
-} from "sequelize-typescript";
-import { BaseModel } from "./Base.model";
 import * as moment from "moment";
+import {
+  BeforeCreate,
+  BeforeSave, BelongsTo, Column,
+  DataType, ForeignKey, Table
+} from "sequelize-typescript";
+import { HttpException } from "../shared/exceptions";
+import { BaseModel } from "./Base.model";
+import { Company } from "./company.model";
+import { Profile } from './profile.model';
 
 export interface IUser {
   id: number;
@@ -182,7 +178,7 @@ export class User extends BaseModel<User> implements IUser {
         expiresIn: "1h",
       }
     );
-    const decoded = jwt.decode(token, { complete: true });
+    const decoded: any = jwt.decode(token, { complete: true });
     const expiresIn = String(
       moment.unix(decoded.payload.exp).toDate().getSeconds()
     );
