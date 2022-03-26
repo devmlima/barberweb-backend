@@ -12,5 +12,6 @@ ScheduleRoute.get('/findById/:id', authenticate_1.authMiddleware, authenticate_1
 ScheduleRoute.put('/update', authenticate_1.authMiddleware, authenticate_1.authPermitions, schedule_controller_1.default.update);
 ScheduleRoute.delete('/delete/:id', authenticate_1.authMiddleware, authenticate_1.authPermitions, schedule_controller_1.default.delete);
 ScheduleRoute.post('/create', authenticate_1.authMiddleware, authenticate_1.authPermitions, schedule_controller_1.default.create);
+ScheduleRoute.post('/excel', authenticate_1.authMiddleware, authenticate_1.authPermitions, schedule_controller_1.default.excel);
 exports.default = ScheduleRoute;
 //# sourceMappingURL=schedule.route.js.map

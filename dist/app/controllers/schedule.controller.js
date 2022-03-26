@@ -9,12 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const json2csv_1 = require("json2csv");
 const lodash_1 = require("lodash");
+const os_1 = require("os");
 const database_1 = require("../../database");
 const client_model_1 = require("../models/client.model");
 const schedule_model_1 = require("../models/schedule.model");
 const cutsMade_model_1 = require("./../models/cutsMade.model");
 const service_model_1 = require("./../models/service.model");
+const aws_1 = require("./../shared/aws");
+const fs = require("fs");
+const util = require("util");
+const writeFile = util.promisify(fs.writeFile);
+const readfilePromise = util.promisify(fs.readFile);
 class ScheduleController {
     findAll(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -123,6 +130,47 @@ class ScheduleController {
             }
             catch (error) {
                 throw new Error("Erro ao realizar o corte");
+            }
+            return;
+        });
+    }
+    excel(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const where = {};
+                const userLogged = request.headers.userLogged;
+                where.empresaId = userLogged.empresaId;
+                const schedules = yield schedule_model_1.Schedule.findAll({
+                    where,
+                    include: [client_model_1.Client, service_model_1.Service],
+                    order: [['dataAlteracao', 'desc']]
+                });
+                const arr = [];
+                for (const schedule of schedules) {
+                    arr.push({
+                        'SERVIÇO': schedule.service.descricao,
+                        'CLIENTE': schedule.client.nome,
+                        'DATA': schedule.dataOperacao,
+                        'HORA': schedule.hora,
+                        'VALOR': String(schedule.valor).replace('.', ','),
+                        'REALIZADO': schedule.confirmado,
+                        'CANCELADO': schedule.cancelado
+                    });
+                }
+                const path = `${(0, os_1.tmpdir)()}/agenda-${new Date().getMilliseconds()}.csv`;
+                const rows = (0, json2csv_1.parse)(arr, {
+                    delimiter: ';',
+                    withBOM: true
+                });
+                yield writeFile(`${path}`, rows, { encoding: 'utf8' });
+                const buffer = yield readfilePromise(`${path}`);
+                const name = `agenda-${new Date().getMilliseconds()}.csv`;
+                const bucket = 'barberweb/agendas';
+                const url = yield (0, aws_1.savePDFS3)(buffer, 'json', name, bucket);
+                return response.status(200).json(url);
+            }
+            catch (e) {
+                return response.status(500).send("Erro ao criar registro");
             }
             return;
         });

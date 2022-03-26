@@ -32,20 +32,29 @@ exports.savePDFS3 = exports.AWS = void 0;
 const AWSSDK = __importStar(require("aws-sdk"));
 AWSSDK.config.region = 'us-east-1';
 exports.AWS = AWSSDK;
-const savePDFS3 = (pdfBuffer) => __awaiter(void 0, void 0, void 0, function* () {
-    const nomePdf = `comprovante-pagamento-${new Date().getMilliseconds()}.pdf`;
-    const urlPDF = `https://barberweb.s3.amazonaws.com/${nomePdf}`;
+const savePDFS3 = (buffer, type, name, bucket) => __awaiter(void 0, void 0, void 0, function* () {
+    const url = `https://barberweb.s3.amazonaws.com/${name}`;
     const s3 = new exports.AWS.S3(createConnectionString());
     const data = {
-        Bucket: 'barberweb',
-        Key: nomePdf,
-        Body: pdfBuffer,
-        ContentType: 'application/pdf'
+        Bucket: bucket,
+        Key: name,
+        Body: buffer,
+        ContentType: `application/${type}`
     };
     yield s3.putObject(data).promise();
-    return urlPDF;
+    return yield getBucketFileSignedUrl({ Bucket: data.Bucket, Key: data.Key, Expires: 10 }, s3);
 });
 exports.savePDFS3 = savePDFS3;
+const getBucketFileSignedUrl = (awsS3Model, s3) => __awaiter(void 0, void 0, void 0, function* () {
+    let fileUrl = '';
+    try {
+        fileUrl = yield s3.getSignedUrlPromise('getObject', awsS3Model);
+    }
+    catch (ex) {
+        console.log(ex);
+    }
+    return fileUrl;
+});
 const createConnectionString = () => {
     return {
         region: process.env.region,

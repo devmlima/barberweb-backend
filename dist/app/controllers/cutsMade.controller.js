@@ -13,9 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gerarPdfRelatorio = void 0;
-const fs_1 = require("fs");
 const lodash_1 = require("lodash");
-const os_1 = require("os");
 const pdfmake_1 = __importDefault(require("pdfmake"));
 const database_1 = require("../../database");
 const cutsMade_model_1 = require("../models/cutsMade.model");
@@ -277,9 +275,9 @@ function gerarPdfRelatorio(docDefinition, fonts) {
                 pdfDoc.on('end', function () {
                     return __awaiter(this, void 0, void 0, function* () {
                         result = Buffer.concat(chunks);
-                        const url = yield (0, aws_1.savePDFS3)(result);
-                        const tmpFile = (0, os_1.tmpdir)() + "/comprovante-pagamento" + "-" + ".pdf";
-                        (0, fs_1.writeFileSync)(tmpFile, result);
+                        const name = `comprovante-pagamento-${new Date().getMilliseconds()}.pdf`;
+                        const bucket = 'barberweb/comprovantes';
+                        const url = yield (0, aws_1.savePDFS3)(result, 'pdf', name, bucket);
                         resolve(url);
                     });
                 });
