@@ -10,9 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyMonth = exports.verifyDay = void 0;
+const lodash_1 = require("lodash");
 const database_1 = require("./../../database");
+const client_model_1 = require("./../models/client.model");
 const cutsMade_model_1 = require("./../models/cutsMade.model");
 const schedule_model_1 = require("./../models/schedule.model");
+const service_model_1 = require("./../models/service.model");
 const user_model_1 = require("./../models/user.model");
 class DashboardController {
     cutsAll(request, response) {
@@ -282,6 +285,106 @@ class DashboardController {
                 obj.labels.push(m);
                 obj.data.push(some);
             }
+            return response.status(200).json(obj);
+        });
+    }
+    relClient(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userLogged = request.headers.userLogged;
+            let query = (0, lodash_1.get)(request, "query.params", null);
+            if (query) {
+                query = JSON.parse(query);
+            }
+            const isAdmin = request.headers.admin;
+            const where = {
+                empresaId: userLogged.empresaId,
+            };
+            const clients = yield client_model_1.Client.findAll({
+                where
+            });
+            if (query && query.service) {
+                where.servicoId = query.service;
+            }
+            if (query && query.client) {
+                where.clienteId = query.client;
+            }
+            if (!isAdmin) {
+                where.usuarioId = userLogged.id;
+            }
+            const cuts = yield cutsMade_model_1.CutsMade.findAll({
+                where,
+                include: [service_model_1.Service],
+                order: [['data', 'desc']]
+            });
+            const obj = [];
+            let totAll = 0;
+            for (const client of clients) {
+                const values = cuts.filter(cut => cut.clienteId === client.id);
+                if (!values || values.length === 0)
+                    continue;
+                const some = values.map(value => +value.valor).reduce((ac, el) => ac += el);
+                totAll += some;
+                obj.push({
+                    cliente: client.nome,
+                    servico: values[0].service.descricao,
+                    data: values[0].data,
+                    total: `R$ ${some.toFixed(2).toString().replace('.', ',')}`
+                });
+            }
+            obj.push({
+                cliente: 'TOTAIS',
+                servico: '-',
+                data: '-',
+                total: `R$ ${totAll.toFixed(2).toString().replace('.', ',')}`
+            });
+            return response.status(200).json(obj);
+        });
+    }
+    relServices(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userLogged = request.headers.userLogged;
+            let query = (0, lodash_1.get)(request, "query.params", null);
+            if (query) {
+                query = JSON.parse(query);
+            }
+            const isAdmin = request.headers.admin;
+            const where = {
+                empresaId: userLogged.empresaId,
+            };
+            if (query && query.service) {
+                where.servicoId = query.service;
+            }
+            const services = yield service_model_1.Service.findAll({
+                where,
+            });
+            if (!isAdmin) {
+                where.usuarioId = userLogged.id;
+            }
+            const cuts = yield cutsMade_model_1.CutsMade.findAll({
+                where,
+                order: [['data', 'desc']]
+            });
+            const obj = [];
+            let totAll = 0;
+            let totAllClients = 0;
+            for (const service of services) {
+                const values = cuts.filter(cut => cut.servicoId === service.id);
+                if (!values || values.length === 0)
+                    continue;
+                const some = values.map(value => +value.valor).reduce((ac, el) => ac += el);
+                totAll += some;
+                totAllClients += values.length;
+                obj.push({
+                    servico: service.descricao,
+                    totalClientes: values.length,
+                    total: `R$ ${some.toFixed(2).toString().replace('.', ',')}`
+                });
+            }
+            obj.push({
+                servico: 'TOTAIS',
+                totalClientes: totAllClients,
+                total: `R$ ${totAll.toFixed(2).toString().replace('.', ',')}`
+            });
             return response.status(200).json(obj);
         });
     }

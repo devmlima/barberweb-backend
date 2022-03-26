@@ -15,5 +15,8 @@ DashboardRoute.get('/faturamentLastSevenDays', authenticate_1.authMiddleware, au
 DashboardRoute.get('/servicesMades', authenticate_1.authMiddleware, authenticate_1.authPermitions, dash_controller_1.default.servicesMades);
 DashboardRoute.get('/schedules', authenticate_1.authMiddleware, authenticate_1.authPermitions, dash_controller_1.default.schedules);
 DashboardRoute.get('/schedulesCanceled', authenticate_1.authMiddleware, authenticate_1.authPermitions, dash_controller_1.default.schedulesCanceled);
+// rels
+DashboardRoute.get('/relClient', authenticate_1.authMiddleware, authenticate_1.authPermitions, dash_controller_1.default.relClient);
+DashboardRoute.get('/relServices', authenticate_1.authMiddleware, authenticate_1.authPermitions, dash_controller_1.default.relServices);
 exports.default = DashboardRoute;
 //# sourceMappingURL=dash.route.js.map

@@ -8,14 +8,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.gerarPdfRelatorio = void 0;
+const fs_1 = require("fs");
+const lodash_1 = require("lodash");
+const os_1 = require("os");
+const pdfmake_1 = __importDefault(require("pdfmake"));
+const database_1 = require("../../database");
+const cutsMade_model_1 = require("../models/cutsMade.model");
 const client_model_1 = require("./../models/client.model");
+const schedule_model_1 = require("./../models/schedule.model");
 const service_model_1 = require("./../models/service.model");
 const user_model_1 = require("./../models/user.model");
-const schedule_model_1 = require("./../models/schedule.model");
-const cutsMade_model_1 = require("../models/cutsMade.model");
-const lodash_1 = require("lodash");
-const database_1 = require("../../database");
+const aws_1 = require("./../shared/aws");
 class CutsMadeController {
     find(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -113,6 +121,175 @@ class CutsMadeController {
             }
         });
     }
+    print(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const fonts = {
+                    Helvetica: {
+                        normal: "Helvetica",
+                        bold: "Helvetica-Bold",
+                        italics: "Helvetica-Oblique",
+                    },
+                };
+                const docDefinition = {
+                    content: [
+                        {
+                            text: 'Comprovante de pagamento',
+                            style: 'header',
+                            alignment: 'center'
+                        },
+                        {
+                            text: [
+                                `${body.date}`
+                            ],
+                            style: 'date',
+                            bold: false,
+                            alignment: 'center'
+                        },
+                        {
+                            text: [
+                                'Valor'
+                            ],
+                            style: 'valueHeader',
+                            bold: false,
+                        },
+                        {
+                            text: [
+                                `${body.valor}`
+                            ],
+                            style: 'valueRow',
+                            bold: true,
+                        },
+                        {
+                            text: [
+                                'Pagador'
+                            ],
+                            style: 'valueHeader',
+                            bold: false,
+                        },
+                        {
+                            text: [
+                                `${body.pagador}`
+                            ],
+                            style: 'valueRow',
+                            bold: true,
+                        },
+                        {
+                            text: [
+                                'Serviço'
+                            ],
+                            style: 'valueHeader',
+                            bold: false,
+                        },
+                        {
+                            text: [
+                                `${body.servico}`
+                            ],
+                            style: 'valueRow',
+                            bold: true,
+                        },
+                        {
+                            text: [],
+                            style: 'divider'
+                        },
+                        {
+                            text: [
+                                'Assinatura'
+                            ],
+                            style: 'ass',
+                            bold: false,
+                        },
+                        {
+                            text: [
+                                '______________________________________'
+                            ],
+                            style: 'assRow',
+                            bold: false,
+                        },
+                    ],
+                    defaultStyle: { font: "Helvetica" },
+                    styles: {
+                        header: {
+                            fontSize: 48,
+                            bold: true,
+                            alignment: 'justify',
+                            color: '#4F4F4F'
+                        },
+                        date: {
+                            fontSize: 20,
+                            alignment: 'justify',
+                            color: '#4F4F4F',
+                            margin: 6,
+                        },
+                        valueHeader: {
+                            fontSize: 20,
+                            color: '#4F4F4F',
+                            margin: 8,
+                            alignment: 'left',
+                        },
+                        valueRow: {
+                            fontSize: 20,
+                            bold: true,
+                            color: '#202021',
+                            margin: 8,
+                            alignment: 'left',
+                        },
+                        divider: {
+                            margin: 32,
+                        },
+                        ass: {
+                            fontSize: 8,
+                            bold: false,
+                            alignment: 'center',
+                            color: '#202021',
+                        },
+                        assRow: {
+                            fontSize: 8,
+                            bold: false,
+                            alignment: 'center',
+                            color: '#202021',
+                            margin: 10,
+                        }
+                    }
+                };
+                const url = yield gerarPdfRelatorio(docDefinition, fonts);
+                return response.status(200).json(url);
+            }
+            catch (e) {
+                return response.status(500).send("Erro ao realizar a impressão");
+            }
+        });
+    }
 }
 exports.default = new CutsMadeController();
+function gerarPdfRelatorio(docDefinition, fonts) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            try {
+                const printer = new pdfmake_1.default(fonts);
+                const pdfDoc = printer.createPdfKitDocument(docDefinition);
+                const chunks = [];
+                let result;
+                pdfDoc.on('data', (chunk) => {
+                    chunks.push(chunk);
+                });
+                pdfDoc.on('end', function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        result = Buffer.concat(chunks);
+                        const url = yield (0, aws_1.savePDFS3)(result);
+                        const tmpFile = (0, os_1.tmpdir)() + "/comprovante-pagamento" + "-" + ".pdf";
+                        (0, fs_1.writeFileSync)(tmpFile, result);
+                        resolve(url);
+                    });
+                });
+                pdfDoc.end();
+            }
+            catch (err) {
+                reject(err);
+            }
+        });
+    });
+}
+exports.gerarPdfRelatorio = gerarPdfRelatorio;
 //# sourceMappingURL=cutsMade.controller.js.map

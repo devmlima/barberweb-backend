@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const cutsMade_model_1 = require("./../models/cutsMade.model");
-const service_model_1 = require("./../models/service.model");
-const schedule_model_1 = require("../models/schedule.model");
 const lodash_1 = require("lodash");
 const database_1 = require("../../database");
 const client_model_1 = require("../models/client.model");
+const schedule_model_1 = require("../models/schedule.model");
+const cutsMade_model_1 = require("./../models/cutsMade.model");
+const service_model_1 = require("./../models/service.model");
 class ScheduleController {
     findAll(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
