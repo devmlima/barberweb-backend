@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { writeFileSync } from 'fs';
 import { get } from "lodash";
-import { tmpdir } from 'os';
 import PdfPrinter from 'pdfmake';
 import { Op } from "../../database";
 import { CutsMade, ICutsMade } from "../models/cutsMade.model";
@@ -270,9 +268,9 @@ export async function gerarPdfRelatorio(docDefinition, fonts: any) {
 
       pdfDoc.on('end', async function () {
         result = Buffer.concat(chunks);
-        const url = await savePDFS3(result);
-        const tmpFile = tmpdir() + "/comprovante-pagamento" + "-" + ".pdf";
-        writeFileSync(tmpFile, result);
+        const name = `comprovante-pagamento-${new Date().getMilliseconds()}.pdf`;
+        const bucket = 'barberweb/comprovantes';
+        const url = await savePDFS3(result, 'pdf', name, bucket);
         resolve(url);
       });
 

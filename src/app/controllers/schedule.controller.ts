@@ -1,10 +1,17 @@
 import { Request, Response } from "express";
+import { parse } from 'json2csv';
 import { get } from "lodash";
+import { tmpdir } from 'os';
 import { Op } from "../../database";
 import { Client } from "../models/client.model";
 import { ISchedule, Schedule } from "../models/schedule.model";
 import { CutsMade } from './../models/cutsMade.model';
 import { Service } from './../models/service.model';
+import { savePDFS3 } from './../shared/aws';
+import fs = require('fs');
+import util = require('util');
+const writeFile = util.promisify(fs.writeFile);
+const readfilePromise = util.promisify(fs.readFile);
 
 class ScheduleController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -117,6 +124,53 @@ class ScheduleController {
       await CutsMade.create(request.body);
     } catch (error) {
       throw new Error("Erro ao realizar o corte");
+    }
+
+    return;
+  }
+
+  async excel(request: Request, response: Response): Promise<Response> {
+    try {
+      const where: any = {};
+      const userLogged: any = request.headers.userLogged;
+      where.empresaId = userLogged.empresaId;
+
+      const schedules = await Schedule.findAll({
+        where,
+        include: [Client, Service],
+        order: [['dataAlteracao', 'desc']]
+      });
+
+      const arr = [];
+
+      for (const schedule of schedules) {
+        arr.push({
+          'SERVIÇO': schedule.service.descricao,
+          'CLIENTE': schedule.client.nome,
+          'DATA': schedule.dataOperacao,
+          'HORA': schedule.hora,
+          'VALOR': String(schedule.valor).replace('.', ','),
+          'REALIZADO': schedule.confirmado,
+          'CANCELADO': schedule.cancelado
+        });
+      }
+
+      const path = `${tmpdir()}/agenda-${new Date().getMilliseconds()}.csv`;
+
+      const rows = parse(arr, {
+        delimiter: ';',
+        withBOM: true
+      });
+
+      await writeFile(`${path}`, rows, { encoding: 'utf8' });
+      const buffer = await readfilePromise(`${path}`);
+      const name = `agenda-${new Date().getMilliseconds()}.csv`;
+      const bucket = 'barberweb/agendas';
+      const url = await savePDFS3(buffer, 'json', name, bucket);
+      
+      return response.status(200).json(url);
+    } catch (e) {
+      return response.status(500).send("Erro ao criar registro");
     }
 
     return;

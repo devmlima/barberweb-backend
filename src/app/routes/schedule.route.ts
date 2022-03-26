@@ -9,6 +9,7 @@ ScheduleRoute.get('/findById/:id', authMiddleware, authPermitions, scheduleContr
 ScheduleRoute.put('/update', authMiddleware, authPermitions, scheduleController.update);
 ScheduleRoute.delete('/delete/:id', authMiddleware, authPermitions, scheduleController.delete);
 ScheduleRoute.post('/create', authMiddleware, authPermitions, scheduleController.create);
+ScheduleRoute.post('/excel', authMiddleware, authPermitions, scheduleController.excel);
 
 export default ScheduleRoute;
 
