@@ -1,9 +1,9 @@
-import { Profile } from './../models/profile.model';
-import { setUserLogged } from "./tenant";
-import { User } from "../models/user.model";
 import { Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { get } from "lodash";
+import { User } from "../models/user.model";
+import { Profile } from './../models/profile.model';
+import { setUserLogged } from "./tenant";
 
 export const authMiddleware = async (req: any, res: Response, next: any) => {
   const token = get(req, "headers.authorization", "")
@@ -37,7 +37,7 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
 
   req.headers.userLogged = userModel;
   req.headers.companyId = userModel.empresaId;
-  req.headers.permitions = JSON.parse(userModel.profile.permissoes);
+  req.headers.permitions = userModel.profile ? JSON.parse(userModel.profile.permissoes) : null;
 
   setUserLogged(userModel);
   next();

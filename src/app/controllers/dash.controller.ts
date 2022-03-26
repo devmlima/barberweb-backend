@@ -13,7 +13,7 @@ class DashboardController {
             const userLogged: any = request.headers.userLogged;
             const isAdmin: any = request.headers.admin;
 
-            const where: any = {};
+            const where: any = { empresaId: userLogged.empresaId };
             if (!isAdmin) {
                 where.usuarioId = userLogged.id;
             }
@@ -31,7 +31,7 @@ class DashboardController {
             const userLogged: any = request.headers.userLogged;
             const isAdmin: any = request.headers.admin;
 
-            const where: any = {};
+            const where: any = { empresaId: userLogged.empresaId };
             if (!isAdmin) {
                 where.usuarioId = userLogged.id;
             }
@@ -55,7 +55,7 @@ class DashboardController {
     async userMonth(request: Request, response: Response): Promise<Response> {
         try {
             const userLogged: any = request.headers.userLogged;
-            const cuts = await CutsMade.findAll();
+            const cuts = await CutsMade.findAll({ where: { empresaId: userLogged.empresaId } as any });
             const users = await User.findAll({ where: { empresaId: userLogged.empresaId } as any });
 
             let count = 0;
@@ -350,7 +350,7 @@ class DashboardController {
         const obj = [];
 
         let totAll = 0;
-        
+
         for (const client of clients) {
             const values = cuts.filter(cut => cut.clienteId === client.id);
 
