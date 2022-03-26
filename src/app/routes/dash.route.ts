@@ -13,4 +13,8 @@ DashboardRoute.get('/servicesMades', authMiddleware, authPermitions, dashControl
 DashboardRoute.get('/schedules', authMiddleware, authPermitions, dashController.schedules);
 DashboardRoute.get('/schedulesCanceled', authMiddleware, authPermitions, dashController.schedulesCanceled);
 
+// rels
+DashboardRoute.get('/relClient', authMiddleware, authPermitions, dashController.relClient);
+DashboardRoute.get('/relServices', authMiddleware, authPermitions, dashController.relServices);
+
 export default DashboardRoute;

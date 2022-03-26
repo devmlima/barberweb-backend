@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
+import { get } from 'lodash';
 import { Op } from './../../database';
+import { Client } from './../models/client.model';
 import { CutsMade } from './../models/cutsMade.model';
 import { Schedule } from './../models/schedule.model';
+import { Service } from './../models/service.model';
 import { User } from './../models/user.model';
 
 class DashboardController {
@@ -165,10 +168,10 @@ class DashboardController {
     async servicesMades(request: Request, response: Response): Promise<Response> {
         const userLogged: any = request.headers.userLogged;
         const months = [
-            'meses', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+            'meses', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
             'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
         ];
-        
+
         const actualMonth = new Date().getMonth() + 1;
         const monthsSearch = [];
 
@@ -181,11 +184,11 @@ class DashboardController {
         const where = {
             empresaId: userLogged.empresaId,
         } as any;
-        
+
         if (!isAdmin) {
             where.usuarioId = userLogged.id;
         }
-        
+
         const cuts = await CutsMade.findAll({
             where,
             include: [User]
@@ -195,7 +198,7 @@ class DashboardController {
 
         for (const m of monthsSearch) {
             if (m === 'meses') continue;
-            
+
             let values = [];
 
             values = cuts.filter(cut => {
@@ -214,10 +217,10 @@ class DashboardController {
     async schedules(request: Request, response: Response): Promise<Response> {
         const userLogged: any = request.headers.userLogged;
         const months = [
-            'meses', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+            'meses', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
             'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
         ];
-        
+
         const actualMonth = new Date().getMonth() + 1;
         const monthsSearch = [];
 
@@ -231,11 +234,11 @@ class DashboardController {
             empresaId: userLogged.empresaId,
             cancelado: false,
         } as any;
-        
+
         if (!isAdmin) {
             where.usuarioId = userLogged.id;
         }
-        
+
         const schedules = await Schedule.findAll({
             where
         });
@@ -244,7 +247,7 @@ class DashboardController {
 
         for (const m of monthsSearch) {
             if (m === 'meses') continue;
-            
+
             let values = [];
 
             values = schedules.filter(schedule => {
@@ -263,10 +266,10 @@ class DashboardController {
     async schedulesCanceled(request: Request, response: Response): Promise<Response> {
         const userLogged: any = request.headers.userLogged;
         const months = [
-            'meses', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+            'meses', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
             'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
         ];
-        
+
         const actualMonth = new Date().getMonth() + 1;
         const monthsSearch = [];
 
@@ -280,11 +283,11 @@ class DashboardController {
             empresaId: userLogged.empresaId,
             cancelado: true,
         } as any;
-        
+
         if (!isAdmin) {
             where.usuarioId = userLogged.id;
         }
-        
+
         const schedules = await Schedule.findAll({
             where
         });
@@ -293,7 +296,7 @@ class DashboardController {
 
         for (const m of monthsSearch) {
             if (m === 'meses') continue;
-            
+
             let values = [];
 
             values = schedules.filter(schedule => {
@@ -305,6 +308,130 @@ class DashboardController {
             obj.labels.push(m);
             obj.data.push(some);
         }
+
+        return response.status(200).json(obj);
+    }
+
+    async relClient(request: Request, response: Response): Promise<Response> {
+        const userLogged: any = request.headers.userLogged;
+        let query: any = get(request, "query.params", null);
+
+        if (query) {
+            query = JSON.parse(query);
+        }
+
+        const isAdmin: any = request.headers.admin;
+        const where = {
+            empresaId: userLogged.empresaId,
+        } as any;
+
+        const clients = await Client.findAll({
+            where
+        });
+
+        if (query && query.service) {
+            where.servicoId = query.service;
+        }
+
+        if (query && query.client) {
+            where.clienteId = query.client;
+        }
+
+        if (!isAdmin) {
+            where.usuarioId = userLogged.id;
+        }
+
+        const cuts = await CutsMade.findAll({
+            where,
+            include: [Service],
+            order: [['data', 'desc']]
+        });
+
+        const obj = [];
+
+        let totAll = 0;
+        
+        for (const client of clients) {
+            const values = cuts.filter(cut => cut.clienteId === client.id);
+
+            if (!values || values.length === 0) continue;
+
+            const some = values.map(value => +value.valor).reduce((ac, el) => ac += el);
+            totAll += some;
+
+            obj.push({
+                cliente: client.nome,
+                servico: values[0].service.descricao,
+                data: values[0].data,
+                total: `R$ ${some.toFixed(2).toString().replace('.', ',')}`
+            });
+        }
+
+        obj.push({
+            cliente: 'TOTAIS',
+            servico: '-',
+            data: '-',
+            total: `R$ ${totAll.toFixed(2).toString().replace('.', ',')}`
+        });
+
+        return response.status(200).json(obj);
+    }
+
+    async relServices(request: Request, response: Response): Promise<Response> {
+        const userLogged: any = request.headers.userLogged;
+        let query: any = get(request, "query.params", null);
+
+        if (query) {
+            query = JSON.parse(query);
+        }
+
+        const isAdmin: any = request.headers.admin;
+        const where = {
+            empresaId: userLogged.empresaId,
+        } as any;
+
+        if (query && query.service) {
+            where.servicoId = query.service;
+        }
+
+        const services = await Service.findAll({
+            where,
+        });
+
+        if (!isAdmin) {
+            where.usuarioId = userLogged.id;
+        }
+
+        const cuts = await CutsMade.findAll({
+            where,
+            order: [['data', 'desc']]
+        });
+
+        const obj = [];
+        let totAll = 0;
+        let totAllClients = 0;
+        for (const service of services) {
+            const values = cuts.filter(cut => cut.servicoId === service.id);
+
+            if (!values || values.length === 0) continue;
+
+            const some = values.map(value => +value.valor).reduce((ac, el) => ac += el);
+
+            totAll += some;
+            totAllClients += values.length;
+
+            obj.push({
+                servico: service.descricao,
+                totalClientes: values.length,
+                total: `R$ ${some.toFixed(2).toString().replace('.', ',')}`
+            });
+        }
+
+        obj.push({
+            servico: 'TOTAIS',
+            totalClientes: totAllClients,
+            total: `R$ ${totAll.toFixed(2).toString().replace('.', ',')}`
+        });
 
         return response.status(200).json(obj);
     }
