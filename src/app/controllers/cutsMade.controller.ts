@@ -1,12 +1,14 @@
+import { Request, Response } from "express";
+import { writeFileSync } from 'fs';
+import { get } from "lodash";
+import { tmpdir } from 'os';
+import PdfPrinter from 'pdfmake';
+import { Op } from "../../database";
+import { CutsMade, ICutsMade } from "../models/cutsMade.model";
 import { Client } from './../models/client.model';
+import { Schedule } from './../models/schedule.model';
 import { Service } from './../models/service.model';
 import { User } from './../models/user.model';
-import { Schedule } from './../models/schedule.model';
-import { ICutsMade, CutsMade } from "../models/cutsMade.model";
-import { Response } from "express";
-import { Request } from "express";
-import { get } from "lodash";
-import { Op } from "../../database";
 
 class CutsMadeController {
   async find(request: Request, response: Response): Promise<Response> {
@@ -28,8 +30,8 @@ class CutsMadeController {
       const cutsMade = await CutsMade.findAll({
         where,
         limit: 30,
-        include: [Client, Service, User], 
-        order: [['dataAlteracao', 'desc']] 
+        include: [Client, Service, User],
+        order: [['dataAlteracao', 'desc']]
       } as any);
       return response.json(cutsMade);
     } catch (e) {
@@ -90,13 +92,13 @@ class CutsMadeController {
       data: '',
     }
 
-    
-    try {
-        body.empresaId = userLogged.empresaId;
-        body.usuarioId = userLogged.id;
-        body.formaPagamentoId = null;
 
-        const obj = Object.assign(param, body);
+    try {
+      body.empresaId = userLogged.empresaId;
+      body.usuarioId = userLogged.id;
+      body.formaPagamentoId = null;
+
+      const obj = Object.assign(param, body);
 
       const instance = await CutsMade.create(obj as any);
       await Schedule.update({ confirmado: true } as any, { where: { id: body.agendamentoId } });
@@ -105,6 +107,179 @@ class CutsMadeController {
       return response.status(500).send("Erro ao criar registro");
     }
   }
+
+  async print(request: Request, response: Response): Promise<Response> {
+    try {
+      const body = request.body;
+
+      const fonts = {
+        Helvetica: {
+          normal: "Helvetica",
+          bold: "Helvetica-Bold",
+          italics: "Helvetica-Oblique",
+        },
+      };
+
+      const docDefinition = {
+        content: [
+          {
+            text: 'Comprovante de pagamento',
+            style: 'header',
+            alignment: 'center'
+          },
+          {
+            text: [
+              `${body.date}`
+            ],
+            style: 'date',
+            bold: false,
+            alignment: 'center'
+          },
+          {
+            text: [
+              'Valor'
+            ],
+            style: 'valueHeader',
+            bold: false,
+          },
+          {
+            text: [
+              `${body.valor}`
+            ],
+            style: 'valueRow',
+            bold: true,
+          },
+          {
+            text: [
+              'Pagador'
+            ],
+            style: 'valueHeader',
+            bold: false,
+          },
+          {
+            text: [
+              `${body.pagador}`
+            ],
+            style: 'valueRow',
+            bold: true,
+          },
+          {
+            text: [
+              'Serviço'
+            ],
+            style: 'valueHeader',
+            bold: false,
+          },
+          {
+            text: [
+              `${body.servico}`
+            ],
+            style: 'valueRow',
+            bold: true,
+          },
+          {
+            text: [],
+            style: 'divider'
+          },
+          {
+            text: [
+              'Assinatura'
+            ],
+            style: 'ass',
+            bold: false,
+          },
+          {
+            text: [
+              '______________________________________'
+            ],
+            style: 'assRow',
+            bold: false,
+          },
+        ],
+        defaultStyle: { font: "Helvetica" },
+        styles: {
+          header: {
+            fontSize: 48,
+            bold: true,
+            alignment: 'justify',
+            color: '#4F4F4F'
+          },
+          date: {
+            fontSize: 20,
+            alignment: 'justify',
+            color: '#4F4F4F',
+            margin: 6,
+          },
+          valueHeader: {
+            fontSize: 20,
+            color: '#4F4F4F',
+            margin: 8,
+            alignment: 'left',
+          },
+          valueRow: {
+            fontSize: 20,
+            bold: true,
+            color: '#202021',
+            margin: 8,
+            alignment: 'left',
+          },
+          divider: {
+            margin: 32,
+          },
+          ass: {
+            fontSize: 8,
+            bold: false,
+            alignment: 'center',
+            color: '#202021',
+          },
+          assRow: {
+            fontSize: 8,
+            bold: false,
+            alignment: 'center',
+            color: '#202021',
+            margin: 10,
+          }
+        }
+      };
+
+      gerarPdfRelatorio(docDefinition, fonts)
+      return response.status(200).json('devolver url aqui');
+    } catch (e) {
+      return response.status(500).send("Erro ao realizar a impressão");
+    }
+  }
 }
 
 export default new CutsMadeController();
+
+
+export async function gerarPdfRelatorio(docDefinition, fonts: any) {
+  return new Promise((resolve, reject) => {
+
+    try {
+      const printer = new PdfPrinter(fonts);
+      const pdfDoc = printer.createPdfKitDocument(docDefinition);
+
+      const chunks = [];
+      let result: Buffer;
+
+      pdfDoc.on('data', (chunk) => {
+        chunks.push(chunk);
+      });
+
+      pdfDoc.on('end', async function () {
+        result = Buffer.concat(chunks);
+        // const url = await savePDFS3(result);
+        const tmpFile = tmpdir() + "/comprovante-pagamento" + "-" + ".pdf";
+        writeFileSync(tmpFile, result);
+        resolve('url');
+      });
+
+      pdfDoc.end();
+
+    } catch (err) {
+      reject(err);
+    }
+
+  })
+}

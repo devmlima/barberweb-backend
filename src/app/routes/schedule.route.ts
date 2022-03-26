@@ -1,6 +1,6 @@
-import { authMiddleware, authPermitions } from '../shared/authenticate';
 import { Router } from "express";
 import scheduleController from "../controllers/schedule.controller";
+import { authMiddleware, authPermitions } from '../shared/authenticate';
 
 const ScheduleRoute = Router();
 

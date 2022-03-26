@@ -1,10 +1,10 @@
-import { CutsMade } from './../models/cutsMade.model';
-import { Service } from './../models/service.model';
-import { Schedule, ISchedule } from "../models/schedule.model";
 import { Request, Response } from "express";
 import { get } from "lodash";
 import { Op } from "../../database";
 import { Client } from "../models/client.model";
+import { ISchedule, Schedule } from "../models/schedule.model";
+import { CutsMade } from './../models/cutsMade.model';
+import { Service } from './../models/service.model';
 
 class ScheduleController {
   async findAll(request: Request, response: Response): Promise<Response> {
@@ -49,12 +49,12 @@ class ScheduleController {
     }
 
     try {
-      const schedule = await Schedule.findAll({ 
-        where, 
-        limit: 30, 
-        offset: 0, 
-        include: [Client, Service], 
-        order: [['dataAlteracao', 'desc']] 
+      const schedule = await Schedule.findAll({
+        where,
+        limit: 30,
+        offset: 0,
+        include: [Client, Service],
+        order: [['dataAlteracao', 'desc']]
       });
       return response.status(200).json(schedule);
     } catch (e) {
