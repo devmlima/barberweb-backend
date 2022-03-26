@@ -9,6 +9,7 @@ import { Client } from './../models/client.model';
 import { Schedule } from './../models/schedule.model';
 import { Service } from './../models/service.model';
 import { User } from './../models/user.model';
+import { savePDFS3 } from './../shared/aws';
 
 class CutsMadeController {
   async find(request: Request, response: Response): Promise<Response> {
@@ -242,8 +243,8 @@ class CutsMadeController {
         }
       };
 
-      gerarPdfRelatorio(docDefinition, fonts)
-      return response.status(200).json('devolver url aqui');
+      const url = await gerarPdfRelatorio(docDefinition, fonts)
+      return response.status(200).json(url);
     } catch (e) {
       return response.status(500).send("Erro ao realizar a impressão");
     }
@@ -269,10 +270,10 @@ export async function gerarPdfRelatorio(docDefinition, fonts: any) {
 
       pdfDoc.on('end', async function () {
         result = Buffer.concat(chunks);
-        // const url = await savePDFS3(result);
+        const url = await savePDFS3(result);
         const tmpFile = tmpdir() + "/comprovante-pagamento" + "-" + ".pdf";
         writeFileSync(tmpFile, result);
-        resolve('url');
+        resolve(url);
       });
 
       pdfDoc.end();
