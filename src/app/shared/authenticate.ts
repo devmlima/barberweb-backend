@@ -34,10 +34,10 @@ export const authMiddleware = async (req: any, res: Response, next: any) => {
         return res.status(401).send("Token inválido!");
     }
   }
-
+  const permissions = userModel.profile ? userModel.profile.permissoes : null;
   req.headers.userLogged = userModel;
   req.headers.companyId = userModel.empresaId;
-  req.headers.permitions = userModel.profile ? JSON.parse(userModel.profile.permissoes) : null;
+  req.headers.permitions = permissions && typeof permissions === 'string' ? JSON.parse(permissions) : permissions
 
   setUserLogged(userModel);
   next();
