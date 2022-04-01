@@ -23,7 +23,7 @@ class DashboardController {
             try {
                 const userLogged = request.headers.userLogged;
                 const isAdmin = request.headers.admin;
-                const where = {};
+                const where = { empresaId: userLogged.empresaId };
                 if (!isAdmin) {
                     where.usuarioId = userLogged.id;
                 }
@@ -40,7 +40,7 @@ class DashboardController {
             try {
                 const userLogged = request.headers.userLogged;
                 const isAdmin = request.headers.admin;
-                const where = {};
+                const where = { empresaId: userLogged.empresaId };
                 if (!isAdmin) {
                     where.usuarioId = userLogged.id;
                 }
@@ -65,7 +65,7 @@ class DashboardController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const userLogged = request.headers.userLogged;
-                const cuts = yield cutsMade_model_1.CutsMade.findAll();
+                const cuts = yield cutsMade_model_1.CutsMade.findAll({ where: { empresaId: userLogged.empresaId } });
                 const users = yield user_model_1.User.findAll({ where: { empresaId: userLogged.empresaId } });
                 let count = 0;
                 let nameUser = '';

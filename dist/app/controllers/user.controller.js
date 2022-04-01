@@ -184,6 +184,13 @@ class UserController {
                         .json("Já existe um usuário cadastrado com o documento informado!");
                     return;
                 }
+                const objProfile = {
+                    empresaId: instanceCompany.id,
+                    descricao: 'ADMINISTRADOR',
+                    permissoes: { "client": { "reading": true, "writing": true, "all": true }, "service": { "reading": true, "writing": true, "all": true }, "schedule": { "reading": true, "writing": true, "all": true }, "user": { "reading": true, "writing": true, "all": true }, "profile": { "reading": true, "writing": true, "all": true } }
+                };
+                const profile = yield profile_model_1.Profile.create(objProfile);
+                params.perfilId = profile.id;
                 instance = yield user_model_1.User.create(params);
                 const { token, expiresIn } = instance.generateToken();
                 return response

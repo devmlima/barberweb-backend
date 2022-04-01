@@ -29,11 +29,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authPermitions = exports.authMiddleware = void 0;
-const profile_model_1 = require("./../models/profile.model");
-const tenant_1 = require("./tenant");
-const user_model_1 = require("../models/user.model");
 const jwt = __importStar(require("jsonwebtoken"));
 const lodash_1 = require("lodash");
+const user_model_1 = require("../models/user.model");
+const profile_model_1 = require("./../models/profile.model");
+const tenant_1 = require("./tenant");
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const token = (0, lodash_1.get)(req, "headers.authorization", "")
         .replace("Bearer", "")
@@ -64,9 +64,10 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
                 return res.status(401).send("Token inválido!");
         }
     }
+    const permissions = userModel.profile ? userModel.profile.permissoes : null;
     req.headers.userLogged = userModel;
     req.headers.companyId = userModel.empresaId;
-    req.headers.permitions = JSON.parse(userModel.profile.permissoes);
+    req.headers.permitions = permissions && typeof permissions === 'string' ? JSON.parse(permissions) : permissions;
     (0, tenant_1.setUserLogged)(userModel);
     next();
 });

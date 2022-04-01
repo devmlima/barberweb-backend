@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const authenticate_1 = require("../shared/authenticate");
 const express_1 = require("express");
 const user_controller_1 = __importDefault(require("../controllers/user.controller"));
+const authenticate_1 = require("../shared/authenticate");
 const UserRoute = (0, express_1.Router)();
 UserRoute.get('/find', authenticate_1.authMiddleware, user_controller_1.default.find);
 UserRoute.get('/findById/:id', authenticate_1.authMiddleware, user_controller_1.default.findById);
