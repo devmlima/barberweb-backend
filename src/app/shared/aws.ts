@@ -12,7 +12,6 @@ export const savePDFS3 = async (buffer, type, name, bucket) => {
         Bucket: bucket,
         Key: name,
         Body: buffer,
-        ContentType: `application/${type}`
     };
 
     await s3.putObject(data).promise();
